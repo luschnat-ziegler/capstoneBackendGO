@@ -2,10 +2,13 @@ package domain
 
 import (
 	"context"
+	"fmt"
 	"github.com/luschnat-ziegler/cc_backend_go/errs"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
+	"os"
 	"time"
 )
 
@@ -15,21 +18,29 @@ type CountryRepositoryDB struct {
 
 func (countryRepositoryDB CountryRepositoryDB) FindAll() ([]Country, *errs.AppError) {
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
 	defer cancel()
 
-	err := countryRepositoryDB.client.Connect(ctx)
+	url, _ := os.LookupEnv("DB_URL")
+	client, err  := mongo.NewClient(options.Client().ApplyURI(url))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = client.Connect(ctx)
 	if err != nil {
 		return nil, errs.NewUnexpectedError("error connecting to DB")
 	}
-	defer countryRepositoryDB.client.Disconnect(ctx)
+	defer client.Disconnect(ctx)
 
-	collection := countryRepositoryDB.client.Database("countrycheck").Collection("countries")
+	collection := client.Database("countrycheck").Collection("countries")
 
 	cursor, err := collection.Find(ctx, bson.D{})
 	if err != nil {
+		fmt.Println(err)
 		return nil, errs.NewUnexpectedError("error querying country collection")
 	}
+
 	defer func() {
 		err = cursor.Close(ctx)
 		if err != nil {

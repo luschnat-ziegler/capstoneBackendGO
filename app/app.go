@@ -1,16 +1,20 @@
 package app
 
 import (
+
 	"github.com/gorilla/mux"
 	"github.com/luschnat-ziegler/cc_backend_go/domain"
 	"github.com/luschnat-ziegler/cc_backend_go/service"
+	"github.com/rs/cors"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"net/http"
+	"os"
 )
 
 func Start() {
+
 	router := mux.NewRouter()
 	dbClient := getDbClient()
 
@@ -20,12 +24,15 @@ func Start() {
 	router.HandleFunc("/countries", ch.getAllCountries).Methods(http.MethodGet).
 		Name("GetAllCountries")
 
-	log.Fatal(http.ListenAndServe(":8000", router))
+	handler := cors.Default().Handler(router)
+	log.Fatal(http.ListenAndServe(":8000", handler))
 }
 
 func getDbClient() *mongo.Client {
 
-	client, err  := mongo.NewClient(options.Client().ApplyURI("mongodb+srv://mlz:horst714@cluster0.z1fxp.mongodb.net/test?retryWrites=true&w=majority"))
+	url, _ := os.LookupEnv("DB_URL")
+
+	client, err  := mongo.NewClient(options.Client().ApplyURI(url))
 	if err != nil {
 		log.Fatal(err)
 	}
