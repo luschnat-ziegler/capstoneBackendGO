@@ -5,29 +5,21 @@ import (
 	"fmt"
 	"github.com/luschnat-ziegler/cc_backend_go/errs"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
-	"os"
 	"time"
 )
 
 type CountryRepositoryDB struct {
-	client *mongo.Client
 }
 
 func (countryRepositoryDB CountryRepositoryDB) FindAll() ([]Country, *errs.AppError) {
 
-	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	url, _ := os.LookupEnv("DB_URL")
-	client, err  := mongo.NewClient(options.Client().ApplyURI(url))
-	if err != nil {
-		log.Fatal(err)
-	}
+	client := getDbClient()
 
-	err = client.Connect(ctx)
+	err := client.Connect(ctx)
 	if err != nil {
 		return nil, errs.NewUnexpectedError("error connecting to DB")
 	}
@@ -59,6 +51,6 @@ func (countryRepositoryDB CountryRepositoryDB) FindAll() ([]Country, *errs.AppEr
 	return output, nil
 }
 
-func NewCountryRepositoryDb(dbClient *mongo.Client) CountryRepositoryDB {
-	return CountryRepositoryDB{dbClient}
+func NewCountryRepositoryDb() CountryRepositoryDB {
+	return CountryRepositoryDB{}
 }

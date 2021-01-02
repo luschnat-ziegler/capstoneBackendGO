@@ -1,9 +1,38 @@
 package service
 
-import "github.com/luschnat-ziegler/cc_backend_go/domain"
+import (
+	"github.com/luschnat-ziegler/cc_backend_go/domain"
+	"github.com/luschnat-ziegler/cc_backend_go/dto"
+	"github.com/luschnat-ziegler/cc_backend_go/errs"
+)
 
 type UserService interface {
-	CreateUser(string) (domain.User, *error)
-	GetUser(string) (domain.User, error)
+	CreateUser(request dto.CreateUserRequest) (*dto.CreateUserResponse, *errs.AppError)
+	GetUser(string) (*dto.GetUserResponse, *errs.AppError)
 }
 
+type DefaultUserService struct {
+	repo domain.UserRepository
+}
+
+func (s DefaultUserService) GetUser(id string) (*dto.GetUserResponse, *errs.AppError) {
+	user, err := s.repo.ById(id)
+	if err != nil {
+		return nil, errs.NewUnexpectedError("Error in ById Method")
+	}
+	return user.ToGetUserResponse(), nil
+}
+
+func (s DefaultUserService) CreateUser(createUserRequest dto.CreateUserRequest) (*dto.CreateUserResponse, *errs.AppError) {
+	user := domain.NewUser(createUserRequest)
+	result, err := s.repo.Save(user)
+	if err != nil {
+		return nil, errs.NewUnexpectedError("Error in Save method")
+	}
+
+	return &dto.CreateUserResponse{Id: result}, nil
+}
+
+func NewUserService(repo domain.UserRepository) DefaultUserService {
+	return DefaultUserService{repo}
+}

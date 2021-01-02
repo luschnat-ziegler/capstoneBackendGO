@@ -2,6 +2,7 @@ package domain
 
 import (
 	"github.com/luschnat-ziegler/cc_backend_go/dto"
+	"github.com/luschnat-ziegler/cc_backend_go/errs"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -20,8 +21,22 @@ type User struct {
 }
 
 type UserRepository interface {
-	ById(string) (*User, error)
-	Save(user User) (*User, *error)
+	ById(string) (*User, *error)
+	Save(user User) (string, *errs.AppError)
+}
+
+func (u User) ToGetUserResponse() *dto.GetUserResponse {
+	return &dto.GetUserResponse{
+		Email: u.Email,
+		FirstName: u.FirstName,
+		LastName: u.LastName,
+		WeightEnvironment: u.WeightEnvironment,
+		WeightGender: u.WeightGender,
+		WeightLgbtq: u.WeightLgbtq,
+		WeightEquality: u.WeightEquality,
+		WeightCorruption: u.WeightCorruption,
+		WeightFreedom: u.WeightFreedom,
+	}
 }
 
 func NewUser(createUserRequest dto.CreateUserRequest) User {
