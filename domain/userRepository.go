@@ -2,6 +2,7 @@ package domain
 
 import (
 	"context"
+	"fmt"
 	"github.com/luschnat-ziegler/cc_backend_go/errs"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -25,9 +26,16 @@ func (userRepositoryDB UserRepositoryDB) ById(id string) (*User, *error) {
 	}
 	defer client.Disconnect(ctx)
 
-	var user User
 	collection := client.Database("countrycheck").Collection("user")
-	err = collection.FindOne(ctx, bson.M{"_id": id}).Decode(&user)
+
+	var user User
+	objectId, _ := primitive.ObjectIDFromHex(id)
+	err = collection.FindOne(ctx, bson.M{"_id": objectId}).Decode(&user)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(user)
 
 	return &user, nil
 }

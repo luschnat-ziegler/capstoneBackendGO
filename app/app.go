@@ -19,10 +19,17 @@ func Start() {
 	ch := CountryHandlers{service.NewCountryService(countryRepositoryDb)}
 	uh := UserHandlers{service.NewUserService(userRepositoryDB)}
 
-	router.HandleFunc("/countries", ch.getAllCountries).Methods(http.MethodGet).
+	router.HandleFunc("/countries", ch.getAllCountries).
+		Methods(http.MethodGet).
 		Name("GetAllCountries")
 
-	router.HandleFunc("/user", uh.CreateUser).Methods(http.MethodPost).Name("CreateUser")
+	router.HandleFunc("/user", uh.CreateUser).
+		Methods(http.MethodPost).
+		Name("CreateUser")
+
+	router.HandleFunc("/user/{user_id}", uh.GetUserById).
+		Methods(http.MethodGet).
+		Name("GetUser")
 
 	handler := cors.Default().Handler(router)
 	log.Fatal(http.ListenAndServe(":8000", handler))
