@@ -35,8 +35,6 @@ func (userRepositoryDB UserRepositoryDB) ById(id string) (*User, *error) {
 		fmt.Println(err)
 	}
 
-	fmt.Println(user)
-
 	return &user, nil
 }
 
