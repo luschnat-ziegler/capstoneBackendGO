@@ -31,6 +31,10 @@ func Start() {
 		Methods(http.MethodGet).
 		Name("GetUser")
 
+	router.HandleFunc("/user", uh.UpdateUserWeights).
+		Methods(http.MethodPatch).
+		Name("UpdateUserWeights")
+
 	handler := cors.Default().Handler(router)
 	log.Fatal(http.ListenAndServe(":8000", handler))
 }

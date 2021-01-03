@@ -9,6 +9,7 @@ import (
 type UserService interface {
 	CreateUser(request dto.CreateUserRequest) (*dto.CreateUserResponse, *errs.AppError)
 	GetUser(string) (*dto.GetUserResponse, *errs.AppError)
+	UpdateWeights(request dto.SetUserWeightsRequest) (*dto.SetUserWeightsResponse, *errs.AppError)
 }
 
 type DefaultUserService struct {
@@ -31,6 +32,15 @@ func (s DefaultUserService) CreateUser(createUserRequest dto.CreateUserRequest) 
 	}
 
 	return &dto.CreateUserResponse{Id: result}, nil
+}
+
+func (s DefaultUserService) UpdateWeights(setUserWeightsRequest dto.SetUserWeightsRequest) (*dto.SetUserWeightsResponse, *errs.AppError) {
+	res, err := s.repo.UpdateWeights(setUserWeightsRequest)
+	if err != nil {
+		return nil, errs.NewUnexpectedError("Error in update method")
+	} else {
+		return res, nil
+	}
 }
 
 func NewUserService(repo domain.UserRepository) DefaultUserService {
