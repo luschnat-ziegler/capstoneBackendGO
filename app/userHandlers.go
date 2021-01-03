@@ -51,7 +51,7 @@ func (uh *UserHandlers) UpdateUserWeights(w http. ResponseWriter, r *http.Reques
 
 	result, e := uh.service.UpdateWeights(setUserWeightsRequest)
 	if e != nil {
-		writeResponse(w, http.StatusBadRequest, err.Error())
+		writeResponse(w, http.StatusBadRequest, e.AsMessage())
 	} else {
 		writeResponse(w, http.StatusOK, result)
 	}

@@ -2,8 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c405ffb5-2ae5-41b2-92a1-1bd975c4e4fc" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/service/authService.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/authHandlers.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dto/LogInRequest.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dto/LogInresponse.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/app.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/app.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/userHandlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/userHandlers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/user.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/userRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/domain/userRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/authService.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/authService.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
