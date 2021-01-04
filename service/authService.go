@@ -35,7 +35,7 @@ func (s DefaultAuthService) LogIn (request dto.LogInRequest) (*dto.LogInResponse
 	fmt.Println(id)
 
 	claims := jwt.MapClaims{
-		"user_id": 	id,
+		"sub": 		id,
 		"exp":      time.Now().Add(time.Hour).Unix(),
 	}
 
