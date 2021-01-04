@@ -11,4 +11,5 @@ It is not yet fully compatible with the React Front-End.
 
 - More stringent error handling
 - Refactoring (lots of duplicate code)
+- Logging
 - Unit testing
