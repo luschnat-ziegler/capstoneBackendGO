@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
 	"net/http"
@@ -24,15 +23,14 @@ func (am AuthMiddleware) authorizationHandler() func(http.Handler) http.Handler 
 					secret,_ := os.LookupEnv("JWT_SECRET")
 					tokenString := getTokenFromHeader(authHeader)
 
-					token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+					_, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 						return []byte(secret), nil
 					})
 					if err != nil {
-						fmt.Println("Error parsing token")
+						writeResponse(w, http.StatusUnauthorized, "token invalid")
+					} else {
+						next.ServeHTTP(w, r)
 					}
-
-					fmt.Println(token.Claims)
-					next.ServeHTTP(w, r)
 				} else {
 					writeResponse(w, http.StatusUnauthorized, "missing token")
 				}
