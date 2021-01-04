@@ -28,7 +28,7 @@ func Start() {
 		Methods(http.MethodPost).
 		Name("CreateUser")
 
-	router.HandleFunc("/user/{user_id}", uh.GetUserById).
+	router.HandleFunc("/user/", uh.GetUserById).
 		Methods(http.MethodGet).
 		Name("GetUser")
 

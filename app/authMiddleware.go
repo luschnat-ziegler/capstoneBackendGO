@@ -27,7 +27,7 @@ func (am AuthMiddleware) authorizationHandler() func(http.Handler) http.Handler 
 						return []byte(secret), nil
 					})
 					if err != nil {
-						writeResponse(w, http.StatusUnauthorized, "token invalid")
+						writeResponse(w, http.StatusUnauthorized, "token invalid or missing")
 					} else {
 						next.ServeHTTP(w, r)
 					}
