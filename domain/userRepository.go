@@ -14,6 +14,29 @@ import (
 
 type UserRepositoryDB struct {}
 
+func (userRepositoryDB UserRepositoryDB) ByEmail(email string) (*User, *error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	client := getDbClient()
+
+	err := client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer client.Disconnect(ctx)
+
+	collection := client.Database("countrycheck").Collection("user")
+
+	var user User
+	err = collection.FindOne(ctx, bson.M{"email": email}).Decode(&user)
+	if err != nil {
+		return nil, &err
+	}
+
+	return &user, nil
+}
+
 func (userRepositoryDB UserRepositoryDB) ById(id string) (*User, *error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

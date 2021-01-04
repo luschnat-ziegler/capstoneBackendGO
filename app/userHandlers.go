@@ -3,10 +3,11 @@ package app
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/luschnat-ziegler/cc_backend_go/dto"
 	"github.com/luschnat-ziegler/cc_backend_go/service"
 	"net/http"
+	"os"
 )
 
 type UserHandlers struct {
@@ -15,11 +16,20 @@ type UserHandlers struct {
 
 func (uh *UserHandlers) GetUserById(w http.ResponseWriter, r *http.Request) {
 
-	id := mux.Vars(r)["user_id"]
+	secret,_ := os.LookupEnv("JWT_SECRET")
+	authHeader := r.Header.Get("Authorization")
+	tokenString := getTokenFromHeader(authHeader)
 
-	user, err := uh.service.GetUser(id)
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return []byte(secret), nil
+	})
 	if err != nil {
-		writeResponse(w, http.StatusBadRequest, err.Message)
+		fmt.Println("token invalid (userHandler)")
+	}
+
+	user, er := uh.service.GetUser(token.Claims.(jwt.MapClaims)["sub"].(string))
+	if err != nil {
+		writeResponse(w, http.StatusBadRequest, er.Message)
 	} else {
 		writeResponse(w, http.StatusOK, user)
 	}
@@ -51,7 +61,7 @@ func (uh *UserHandlers) UpdateUserWeights(w http. ResponseWriter, r *http.Reques
 
 	result, e := uh.service.UpdateWeights(setUserWeightsRequest)
 	if e != nil {
-		writeResponse(w, http.StatusBadRequest, err.Error())
+		writeResponse(w, http.StatusBadRequest, e.AsMessage())
 	} else {
 		writeResponse(w, http.StatusOK, result)
 	}

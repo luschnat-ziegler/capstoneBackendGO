@@ -18,6 +18,7 @@ func Start() {
 	userRepositoryDB := domain.NewUserRepositoryDb()
 	ch := CountryHandlers{service.NewCountryService(countryRepositoryDb)}
 	uh := UserHandlers{service.NewUserService(userRepositoryDB)}
+	ah := AuthHandlers{service.NewAuthService(userRepositoryDB)}
 
 	router.HandleFunc("/countries", ch.getAllCountries).
 		Methods(http.MethodGet).
@@ -27,13 +28,20 @@ func Start() {
 		Methods(http.MethodPost).
 		Name("CreateUser")
 
-	router.HandleFunc("/user/{user_id}", uh.GetUserById).
+	router.HandleFunc("/user/", uh.GetUserById).
 		Methods(http.MethodGet).
 		Name("GetUser")
 
 	router.HandleFunc("/user", uh.UpdateUserWeights).
 		Methods(http.MethodPatch).
 		Name("UpdateUserWeights")
+
+	router.HandleFunc("/login", ah.logInUser).
+		Methods(http.MethodPost).
+		Name("LogInUser")
+
+	am := AuthMiddleware{}
+	router.Use(am.authorizationHandler())
 
 	handler := cors.Default().Handler(router)
 	log.Fatal(http.ListenAndServe(":8000", handler))

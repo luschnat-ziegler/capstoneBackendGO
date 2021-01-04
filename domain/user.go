@@ -22,6 +22,7 @@ type User struct {
 
 type UserRepository interface {
 	ById(string) (*User, *error)
+	ByEmail(string) (*User, *error)
 	Save(user User) (string, *errs.AppError)
 	UpdateWeights(request dto.SetUserWeightsRequest) (*dto.SetUserWeightsResponse, *error)
 }
