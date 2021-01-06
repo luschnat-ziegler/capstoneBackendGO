@@ -62,7 +62,7 @@ func (userRepositoryDB UserRepositoryDB) ById(id string) (*User, *error) {
 	return &user, nil
 }
 
-func (userRepositoryDB UserRepositoryDB) Save(user User) (string, *errs.AppError) {
+func (userRepositoryDB UserRepositoryDB) Save(user User) (*string, *errs.AppError) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -75,16 +75,26 @@ func (userRepositoryDB UserRepositoryDB) Save(user User) (string, *errs.AppError
 	}
 	defer client.Disconnect(ctx)
 
+	collection := client.Database("countrycheck").Collection("user")
+
+	count, err :=collection.CountDocuments(ctx, bson.M{"email": user.Email})
+	if err != nil {
+		return nil, errs.NewUnexpectedError("Database error")
+	}
+
+	if count > 0 {
+		return nil, errs.NewInvalidRequestError("User already in db")
+	}
+
 	hashPw, err := bcrypt.GenerateFromPassword([]byte(user.Password), 14)
 	user.Password = string(hashPw)
 
-	collection := client.Database("countrycheck").Collection("user")
 	result, err := collection.InsertOne(ctx, user)
 	if err != nil {log.Fatal(err)}
 
 	resultAsString := result.InsertedID.(primitive.ObjectID).Hex()
 
-	return resultAsString, nil
+	return &resultAsString, nil
 }
 
 func (userRepositoryDB UserRepositoryDB) UpdateWeights(request dto.SetUserWeightsRequest) (*dto.SetUserWeightsResponse, *error) {

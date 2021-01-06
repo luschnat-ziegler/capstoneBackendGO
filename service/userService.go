@@ -28,10 +28,10 @@ func (s DefaultUserService) CreateUser(createUserRequest dto.CreateUserRequest) 
 	user := domain.NewUser(createUserRequest)
 	result, err := s.repo.Save(user)
 	if err != nil {
-		return nil, errs.NewUnexpectedError("Error in Save method")
+		return nil, err
 	}
 
-	return &dto.CreateUserResponse{Id: result}, nil
+	return &dto.CreateUserResponse{Id: *result}, nil
 }
 
 func (s DefaultUserService) UpdateWeights(setUserWeightsRequest dto.SetUserWeightsRequest) (*dto.SetUserWeightsResponse, *errs.AppError) {

@@ -43,9 +43,10 @@ func (uh *UserHandlers) CreateUser(w http. ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 
-	result, e := uh.service.CreateUser(createUserRequest)
-	if e != nil {
-		writeResponse(w, http.StatusBadRequest, err.Error())
+	result, appError := uh.service.CreateUser(createUserRequest)
+
+	if appError != nil {
+		writeResponse(w, http.StatusBadRequest, appError.AsMessage())
 	} else {
 		writeResponse(w, http.StatusCreated, result)
 	}

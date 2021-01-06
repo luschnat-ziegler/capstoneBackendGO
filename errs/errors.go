@@ -27,6 +27,13 @@ func NewUnexpectedError(message string) *AppError {
 	}
 }
 
+func NewInvalidRequestError(message string) *AppError {
+	return &AppError{
+		Message: message,
+		Code: http.StatusBadRequest,
+	}
+}
+
 /*
 func NewValidationError(message string) *AppError {
 	return &AppError{
