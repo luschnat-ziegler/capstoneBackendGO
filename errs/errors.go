@@ -40,6 +40,13 @@ func NewBadRequestError(message string) *AppError {
 		Code: http.StatusBadRequest,
 	}
 }
+
+func NewUnauthorizedError(message string) *AppError {
+	return &AppError{
+		Code:    http.StatusUnauthorized,
+		Message: message,
+	}
+}
 /*
 func NewValidationError(message string) *AppError {
 	return &AppError{

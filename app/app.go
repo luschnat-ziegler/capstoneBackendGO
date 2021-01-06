@@ -62,5 +62,4 @@ func sanityCheck() {
 			log.Fatal(fmt.Sprintf("Environment variable %s not set in .env. Terminating application...", envVar))
 		}
 	}
-	fmt.Println("Sanity check complete")
 }

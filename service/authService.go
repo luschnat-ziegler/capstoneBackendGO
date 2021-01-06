@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/luschnat-ziegler/cc_backend_go/domain"
 	"github.com/luschnat-ziegler/cc_backend_go/dto"
@@ -32,7 +31,6 @@ func (s DefaultAuthService) LogIn (request dto.LogInRequest) (*dto.LogInResponse
 	}
 
 	id := user.ID.Hex()
-	fmt.Println(id)
 
 	claims := jwt.MapClaims{
 		"sub": 		id,

@@ -60,10 +60,23 @@ func (uh *UserHandlers) UpdateUserWeights(w http. ResponseWriter, r *http.Reques
 		writeResponse(w, http.StatusBadRequest, errs.NewBadRequestError("Body parsing error").AsMessage())
 	}
 
-	result, appError := uh.service.UpdateWeights(setUserWeightsRequest)
-	if appError != nil {
-		writeResponse(w, appError.Code, appError.AsMessage())
+	secret,_ := os.LookupEnv("JWT_SECRET")
+	authHeader := r.Header.Get("Authorization")
+	tokenString := getTokenFromHeader(authHeader)
+
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return []byte(secret), nil
+	})
+
+	if err != nil {
+		writeResponse(w, http.StatusBadRequest, errs.NewBadRequestError("Invalid token").AsMessage())
 	} else {
-		writeResponse(w, http.StatusOK, result)
+		setUserWeightsRequest.Id = token.Claims.(jwt.MapClaims)["sub"].(string)
+		result, appError := uh.service.UpdateWeights(setUserWeightsRequest)
+		if appError != nil {
+			writeResponse(w, appError.Code, appError.AsMessage())
+		} else {
+			writeResponse(w, http.StatusOK, result)
+		}
 	}
 }

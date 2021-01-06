@@ -3,6 +3,7 @@ package app
 import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
+	"github.com/luschnat-ziegler/cc_backend_go/errs"
 	"net/http"
 	"os"
 	"strings"
@@ -27,12 +28,14 @@ func (am AuthMiddleware) authorizationHandler() func(http.Handler) http.Handler 
 						return []byte(secret), nil
 					})
 					if err != nil {
-						writeResponse(w, http.StatusUnauthorized, "token invalid or missing")
+						appError := errs.NewUnauthorizedError("Token invalid or missing")
+						writeResponse(w, appError.Code, appError.AsMessage())
 					} else {
 						next.ServeHTTP(w, r)
 					}
 				} else {
-					writeResponse(w, http.StatusUnauthorized, "missing token")
+					appError := errs.NewUnauthorizedError("Token missing")
+					writeResponse(w, appError.Code, appError.AsMessage())
 				}
 			}
 		})
