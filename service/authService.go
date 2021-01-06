@@ -41,7 +41,7 @@ func (s DefaultAuthService) LogIn (request dto.LogInRequest) (*dto.LogInResponse
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	secret,_ := os.LookupEnv("JWT_SECRET")
+	secret, _ := os.LookupEnv("JWT_SECRET")
 	signedTokenAsString, e := token.SignedString([]byte(secret))
 	if e != nil {
 		log.Println("Failed while signing token: " + e.Error())

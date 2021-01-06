@@ -19,7 +19,7 @@ type DefaultUserService struct {
 func (s DefaultUserService) GetUser(id string) (*dto.GetUserResponse, *errs.AppError) {
 	user, err := s.repo.ById(id)
 	if err != nil {
-		return nil, errs.NewUnexpectedError("Error in ById Method")
+		return nil, err
 	}
 	return user.ToGetUserResponse(), nil
 }
@@ -37,7 +37,7 @@ func (s DefaultUserService) CreateUser(createUserRequest dto.CreateUserRequest) 
 func (s DefaultUserService) UpdateWeights(setUserWeightsRequest dto.SetUserWeightsRequest) (*dto.SetUserWeightsResponse, *errs.AppError) {
 	res, err := s.repo.UpdateWeights(setUserWeightsRequest)
 	if err != nil {
-		return nil, errs.NewUnexpectedError("Error in update method")
+		return nil, err
 	} else {
 		return res, nil
 	}

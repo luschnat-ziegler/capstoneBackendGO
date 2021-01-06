@@ -2,9 +2,9 @@ package app
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/luschnat-ziegler/cc_backend_go/dto"
+	"github.com/luschnat-ziegler/cc_backend_go/errs"
 	"github.com/luschnat-ziegler/cc_backend_go/service"
 	"net/http"
 	"os"
@@ -24,14 +24,14 @@ func (uh *UserHandlers) GetUserById(w http.ResponseWriter, r *http.Request) {
 		return []byte(secret), nil
 	})
 	if err != nil {
-		fmt.Println("token invalid (userHandler)")
-	}
-
-	user, er := uh.service.GetUser(token.Claims.(jwt.MapClaims)["sub"].(string))
-	if err != nil {
-		writeResponse(w, http.StatusBadRequest, er.Message)
+		writeResponse(w, http.StatusBadRequest, errs.NewBadRequestError("Invalid token").AsMessage())
 	} else {
-		writeResponse(w, http.StatusOK, user)
+		user, appError := uh.service.GetUser(token.Claims.(jwt.MapClaims)["sub"].(string))
+		if appError != nil {
+			writeResponse(w, http.StatusBadRequest, appError.AsMessage())
+		} else {
+			writeResponse(w, http.StatusOK, user)
+		}
 	}
 }
 
@@ -40,13 +40,13 @@ func (uh *UserHandlers) CreateUser(w http. ResponseWriter, r *http.Request) {
 	var createUserRequest dto.CreateUserRequest
 	err := json.NewDecoder(r.Body).Decode(&createUserRequest)
 	if err != nil {
-		fmt.Println(err)
+		writeResponse(w, http.StatusBadRequest, errs.NewBadRequestError("Body parsing error").AsMessage())
 	}
 
 	result, appError := uh.service.CreateUser(createUserRequest)
 
 	if appError != nil {
-		writeResponse(w, http.StatusBadRequest, appError.AsMessage())
+		writeResponse(w, appError.Code, appError.AsMessage())
 	} else {
 		writeResponse(w, http.StatusCreated, result)
 	}
@@ -57,12 +57,12 @@ func (uh *UserHandlers) UpdateUserWeights(w http. ResponseWriter, r *http.Reques
 	var setUserWeightsRequest dto.SetUserWeightsRequest
 	err := json.NewDecoder(r.Body).Decode(&setUserWeightsRequest)
 	if err != nil {
-		fmt.Println("Error decoding request body")
+		writeResponse(w, http.StatusBadRequest, errs.NewBadRequestError("Body parsing error").AsMessage())
 	}
 
-	result, e := uh.service.UpdateWeights(setUserWeightsRequest)
-	if e != nil {
-		writeResponse(w, http.StatusBadRequest, e.AsMessage())
+	result, appError := uh.service.UpdateWeights(setUserWeightsRequest)
+	if appError != nil {
+		writeResponse(w, appError.Code, appError.AsMessage())
 	} else {
 		writeResponse(w, http.StatusOK, result)
 	}

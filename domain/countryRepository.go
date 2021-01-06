@@ -21,7 +21,7 @@ func (countryRepositoryDB CountryRepositoryDB) FindAll() ([]Country, *errs.AppEr
 
 	err := client.Connect(ctx)
 	if err != nil {
-		return nil, errs.NewUnexpectedError("error connecting to DB")
+		return nil, errs.NewUnexpectedError("Database Error")
 	}
 	defer client.Disconnect(ctx)
 
@@ -30,7 +30,7 @@ func (countryRepositoryDB CountryRepositoryDB) FindAll() ([]Country, *errs.AppEr
 	cursor, err := collection.Find(ctx, bson.D{})
 	if err != nil {
 		fmt.Println(err)
-		return nil, errs.NewUnexpectedError("error querying country collection")
+		return nil, errs.NewUnexpectedError("Database Error")
 	}
 
 	defer func() {
@@ -44,7 +44,10 @@ func (countryRepositoryDB CountryRepositoryDB) FindAll() ([]Country, *errs.AppEr
 	for cursor.Next(ctx) {
 		var country Country
 		err := cursor.Decode(&country)
-		if err != nil { log.Fatal(err) }
+		if err != nil {
+			log.Println(err)
+			return nil, errs.NewUnexpectedError("Database Error")
+		}
 		output = append(output, country)
 	}
 

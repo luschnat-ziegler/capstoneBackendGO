@@ -21,10 +21,10 @@ type User struct {
 }
 
 type UserRepository interface {
-	ById(string) (*User, *error)
+	ById(string) (*User, *errs.AppError)
 	ByEmail(string) (*User, *error)
 	Save(user User) (*string, *errs.AppError)
-	UpdateWeights(request dto.SetUserWeightsRequest) (*dto.SetUserWeightsResponse, *error)
+	UpdateWeights(request dto.SetUserWeightsRequest) (*dto.SetUserWeightsResponse, *errs.AppError)
 }
 
 func (u User) ToGetUserResponse() *dto.GetUserResponse {

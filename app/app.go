@@ -1,16 +1,19 @@
 package app
 
 import (
-
+	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/luschnat-ziegler/cc_backend_go/domain"
 	"github.com/luschnat-ziegler/cc_backend_go/service"
 	"github.com/rs/cors"
 	"log"
 	"net/http"
+	"os"
 )
 
 func Start() {
+
+	sanityCheck()
 
 	router := mux.NewRouter()
 
@@ -45,4 +48,19 @@ func Start() {
 
 	handler := cors.Default().Handler(router)
 	log.Fatal(http.ListenAndServe(":8000", handler))
+}
+
+
+func sanityCheck() {
+	envVars := []string{
+		"DB_URL",
+		"JWT_SECRET",
+	}
+	for _, envVar := range envVars {
+		_, ok := os.LookupEnv(envVar)
+		if !ok {
+			log.Fatal(fmt.Sprintf("Environment variable %s not set in .env. Terminating application...", envVar))
+		}
+	}
+	fmt.Println("Sanity check complete")
 }

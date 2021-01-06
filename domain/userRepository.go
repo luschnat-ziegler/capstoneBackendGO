@@ -22,7 +22,8 @@ func (userRepositoryDB UserRepositoryDB) ByEmail(email string) (*User, *error) {
 
 	err := client.Connect(ctx)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return nil, &err
 	}
 	defer client.Disconnect(ctx)
 
@@ -37,7 +38,7 @@ func (userRepositoryDB UserRepositoryDB) ByEmail(email string) (*User, *error) {
 	return &user, nil
 }
 
-func (userRepositoryDB UserRepositoryDB) ById(id string) (*User, *error) {
+func (userRepositoryDB UserRepositoryDB) ById(id string) (*User, *errs.AppError) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -83,7 +84,7 @@ func (userRepositoryDB UserRepositoryDB) Save(user User) (*string, *errs.AppErro
 	}
 
 	if count > 0 {
-		return nil, errs.NewInvalidRequestError("User already in db")
+		return nil, errs.NewConflictError("Existing user")
 	}
 
 	hashPw, err := bcrypt.GenerateFromPassword([]byte(user.Password), 14)
@@ -97,7 +98,7 @@ func (userRepositoryDB UserRepositoryDB) Save(user User) (*string, *errs.AppErro
 	return &resultAsString, nil
 }
 
-func (userRepositoryDB UserRepositoryDB) UpdateWeights(request dto.SetUserWeightsRequest) (*dto.SetUserWeightsResponse, *error) {
+func (userRepositoryDB UserRepositoryDB) UpdateWeights(request dto.SetUserWeightsRequest) (*dto.SetUserWeightsResponse, *errs.AppError) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -106,13 +107,18 @@ func (userRepositoryDB UserRepositoryDB) UpdateWeights(request dto.SetUserWeight
 
 	err := client.Connect(ctx)
 	if err != nil {
-		return nil, &err
+		log.Println(err)
+		return nil, errs.NewUnexpectedError("Database error")
 	}
 	defer client.Disconnect(ctx)
 
 	collection := client.Database("countrycheck").Collection("user")
 
-	objectId, _ := primitive.ObjectIDFromHex(request.Id)
+	objectId, err := primitive.ObjectIDFromHex(request.Id)
+	if err != nil {
+		log.Println(err)
+		return nil, errs.NewUnexpectedError("ID parsing error")
+	}
 
 	filter := bson.M{"_id": objectId}
 
@@ -129,9 +135,8 @@ func (userRepositoryDB UserRepositoryDB) UpdateWeights(request dto.SetUserWeight
 
 	res, err := collection.UpdateOne(ctx, filter, update)
 	if err != nil {
-		return nil, &err
+		return nil, errs.NewNotFoundError(err.Error())
 	}
-
 	if res.ModifiedCount == 0 && res.MatchedCount > 0 {
 		return &dto.SetUserWeightsResponse{
 			Matched: true,

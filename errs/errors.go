@@ -27,13 +27,19 @@ func NewUnexpectedError(message string) *AppError {
 	}
 }
 
-func NewInvalidRequestError(message string) *AppError {
+func NewConflictError(message string) *AppError {
+	return &AppError{
+		Message: message,
+		Code: http.StatusConflict,
+	}
+}
+
+func NewBadRequestError(message string) *AppError {
 	return &AppError{
 		Message: message,
 		Code: http.StatusBadRequest,
 	}
 }
-
 /*
 func NewValidationError(message string) *AppError {
 	return &AppError{
