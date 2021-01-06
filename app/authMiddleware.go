@@ -21,14 +21,14 @@ func (am AuthMiddleware) authorizationHandler() func(http.Handler) http.Handler 
 			} else {
 				authHeader := r.Header.Get("Authorization")
 				if authHeader != "" {
-					secret,_ := os.LookupEnv("JWT_SECRET")
+					secret , _ := os.LookupEnv("JWT_SECRET")
 					tokenString := getTokenFromHeader(authHeader)
 
-					_, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+					_ , err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 						return []byte(secret), nil
 					})
 					if err != nil {
-						appError := errs.NewUnauthorizedError("Token invalid or missing")
+						appError := errs.NewUnauthorizedError("Token invalid")
 						writeResponse(w, appError.Code, appError.AsMessage())
 					} else {
 						next.ServeHTTP(w, r)

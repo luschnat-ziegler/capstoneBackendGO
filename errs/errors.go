@@ -47,11 +47,10 @@ func NewUnauthorizedError(message string) *AppError {
 		Message: message,
 	}
 }
-/*
+
 func NewValidationError(message string) *AppError {
 	return &AppError{
 		Message: message,
 		Code:    http.StatusUnprocessableEntity,
 	}
 }
- */
