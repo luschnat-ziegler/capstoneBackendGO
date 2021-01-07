@@ -1,9 +1,9 @@
 package domain
 
 import (
+	"github.com/luschnat-ziegler/cc_backend_go/logger"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
 	"os"
 )
 
@@ -13,7 +13,7 @@ func getDbClient() *mongo.Client {
 
 	client, err  := mongo.NewClient(options.Client().ApplyURI(url))
 	if err != nil {
-		log.Fatal(err)
+		logger.Error("Database init error: " + err.Error())
 	}
 
 	return client
