@@ -48,9 +48,20 @@ func NewUnauthorizedError(message string) *AppError {
 	}
 }
 
-func NewValidationError(message string) *AppError {
-	return &AppError{
-		Message: message,
+type ValidationError struct {
+	Code    int    `json:",omitempty"`
+	InvalidFields []string `json:"invalid_fields"`
+}
+
+func NewValidationError(invalidFields []string) *ValidationError {
+	return &ValidationError{
+		InvalidFields: invalidFields,
 		Code:    http.StatusUnprocessableEntity,
+	}
+}
+
+func (e ValidationError) AsMessage() *ValidationError {
+	return &ValidationError{
+		InvalidFields: e.InvalidFields,
 	}
 }
