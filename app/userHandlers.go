@@ -42,13 +42,16 @@ func (uh *UserHandlers) CreateUser(w http. ResponseWriter, r *http.Request) {
 	if err != nil {
 		writeResponse(w, http.StatusBadRequest, errs.NewBadRequestError("Body parsing error").AsMessage())
 	} else {
-
-		result, appError := uh.service.CreateUser(createUserRequest)
-
-		if appError != nil {
-			writeResponse(w, appError.Code, appError.AsMessage())
+		validationError := createUserRequest.Validate()
+		if validationError != nil {
+			writeResponse(w, validationError.Code, validationError.AsMessage())
 		} else {
-			writeResponse(w, http.StatusCreated, result)
+			result, appError := uh.service.CreateUser(createUserRequest)
+			if appError != nil {
+				writeResponse(w, appError.Code, appError.AsMessage())
+			} else {
+				writeResponse(w, http.StatusCreated, result)
+			}
 		}
 	}
 }
@@ -59,25 +62,27 @@ func (uh *UserHandlers) UpdateUserWeights(w http. ResponseWriter, r *http.Reques
 	err := json.NewDecoder(r.Body).Decode(&setUserWeightsRequest)
 	if err != nil {
 		writeResponse(w, http.StatusBadRequest, errs.NewBadRequestError("Body parsing error").AsMessage())
-	} else if !setUserWeightsRequest.HasValidWeights() {
-		appError := errs.NewValidationError("Weights must be in interval [0,4]")
-		writeResponse(w, appError.Code, appError.AsMessage())
 	} else {
-		secret, _ := os.LookupEnv("JWT_SECRET")
-		authHeader := r.Header.Get("Authorization")
-		tokenString := getTokenFromHeader(authHeader)
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			return []byte(secret), nil
-		})
-		if err != nil {
-			writeResponse(w, http.StatusBadRequest, errs.NewBadRequestError("Invalid token").AsMessage())
+		validationError := setUserWeightsRequest.Validate()
+		if validationError != nil {
+			writeResponse(w, validationError.Code, validationError.AsMessage())
 		} else {
-			setUserWeightsRequest.Id = token.Claims.(jwt.MapClaims)["sub"].(string)
-			result, appError := uh.service.UpdateWeights(setUserWeightsRequest)
-			if appError != nil {
-				writeResponse(w, appError.Code, appError.AsMessage())
+			secret, _ := os.LookupEnv("JWT_SECRET")
+			authHeader := r.Header.Get("Authorization")
+			tokenString := getTokenFromHeader(authHeader)
+			token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+				return []byte(secret), nil
+			})
+			if err != nil {
+				writeResponse(w, http.StatusBadRequest, errs.NewBadRequestError("Invalid token").AsMessage())
 			} else {
-				writeResponse(w, http.StatusOK, result)
+				setUserWeightsRequest.Id = token.Claims.(jwt.MapClaims)["sub"].(string)
+				result, appError := uh.service.UpdateWeights(setUserWeightsRequest)
+				if appError != nil {
+					writeResponse(w, appError.Code, appError.AsMessage())
+				} else {
+					writeResponse(w, http.StatusOK, result)
+				}
 			}
 		}
 	}
