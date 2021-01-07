@@ -5,15 +5,14 @@ import (
 	"github.com/luschnat-ziegler/cc_backend_go/domain"
 	"github.com/luschnat-ziegler/cc_backend_go/dto"
 	"github.com/luschnat-ziegler/cc_backend_go/errs"
+	"github.com/luschnat-ziegler/cc_backend_go/logger"
 	"golang.org/x/crypto/bcrypt"
-	"log"
 	"os"
 	"time"
 )
 
 type AuthService interface {
 	LogIn(request dto.LogInRequest) (*dto.LogInResponse, *errs.AppError)
-	// Verify(string) (bool, *errs.AppError)
 }
 
 type DefaultAuthService struct {
@@ -42,7 +41,7 @@ func (s DefaultAuthService) LogIn (request dto.LogInRequest) (*dto.LogInResponse
 	secret, _ := os.LookupEnv("JWT_SECRET")
 	signedTokenAsString, e := token.SignedString([]byte(secret))
 	if e != nil {
-		log.Println("Failed while signing token: " + e.Error())
+		logger.Error("Error signing token: " + e.Error())
 		return nil, errs.NewUnexpectedError("Error generating token")
 	}
 

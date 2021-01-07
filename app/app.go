@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/luschnat-ziegler/cc_backend_go/domain"
+	"github.com/luschnat-ziegler/cc_backend_go/logger"
 	"github.com/luschnat-ziegler/cc_backend_go/service"
 	"github.com/rs/cors"
 	"log"
@@ -12,6 +13,8 @@ import (
 )
 
 func Start() {
+
+	logger.Info("Application started...")
 
 	sanityCheck()
 

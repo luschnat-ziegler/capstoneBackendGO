@@ -2,13 +2,12 @@ package domain
 
 import (
 	"context"
-	"fmt"
 	"github.com/luschnat-ziegler/cc_backend_go/dto"
 	"github.com/luschnat-ziegler/cc_backend_go/errs"
+	"github.com/luschnat-ziegler/cc_backend_go/logger"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
-	"log"
 	"time"
 )
 
@@ -22,7 +21,7 @@ func (userRepositoryDB UserRepositoryDB) ByEmail(email string) (*User, *error) {
 
 	err := client.Connect(ctx)
 	if err != nil {
-		log.Println(err)
+		logger.Error("Error connecting to database: " + err.Error())
 		return nil, &err
 	}
 	defer client.Disconnect(ctx)
@@ -32,6 +31,7 @@ func (userRepositoryDB UserRepositoryDB) ByEmail(email string) (*User, *error) {
 	var user User
 	err = collection.FindOne(ctx, bson.M{"email": email}).Decode(&user)
 	if err != nil {
+		logger.Error("Error querying database: " + err.Error())
 		return nil, &err
 	}
 
@@ -47,7 +47,7 @@ func (userRepositoryDB UserRepositoryDB) ById(id string) (*User, *errs.AppError)
 
 	err := client.Connect(ctx)
 	if err != nil {
-		log.Fatal(err)
+		logger.Error("Error connecting to database: " + err.Error())
 	}
 	defer client.Disconnect(ctx)
 
@@ -57,7 +57,7 @@ func (userRepositoryDB UserRepositoryDB) ById(id string) (*User, *errs.AppError)
 	objectId, _ := primitive.ObjectIDFromHex(id)
 	err = collection.FindOne(ctx, bson.M{"_id": objectId}).Decode(&user)
 	if err != nil {
-		fmt.Println(err)
+		logger.Error("Error querying database: " + err.Error())
 	}
 
 	return &user, nil
@@ -72,7 +72,7 @@ func (userRepositoryDB UserRepositoryDB) Save(user User) (*string, *errs.AppErro
 
 	err := client.Connect(ctx)
 	if err != nil {
-		log.Fatal(err)
+		logger.Error("Error connecting to database: " + err.Error())
 	}
 	defer client.Disconnect(ctx)
 
@@ -80,6 +80,7 @@ func (userRepositoryDB UserRepositoryDB) Save(user User) (*string, *errs.AppErro
 
 	count, err :=collection.CountDocuments(ctx, bson.M{"email": user.Email})
 	if err != nil {
+		logger.Error("Error querying database: " + err.Error())
 		return nil, errs.NewUnexpectedError("Database error")
 	}
 
@@ -91,7 +92,10 @@ func (userRepositoryDB UserRepositoryDB) Save(user User) (*string, *errs.AppErro
 	user.Password = string(hashPw)
 
 	result, err := collection.InsertOne(ctx, user)
-	if err != nil {log.Fatal(err)}
+	if err != nil {
+		logger.Error("Error querying database: " + err.Error())
+		return nil, errs.NewUnexpectedError("Database error")
+	}
 
 	resultAsString := result.InsertedID.(primitive.ObjectID).Hex()
 
@@ -107,7 +111,7 @@ func (userRepositoryDB UserRepositoryDB) UpdateWeights(request dto.SetUserWeight
 
 	err := client.Connect(ctx)
 	if err != nil {
-		log.Println(err)
+		logger.Error("Error connecting to database: " + err.Error())
 		return nil, errs.NewUnexpectedError("Database error")
 	}
 	defer client.Disconnect(ctx)
@@ -116,7 +120,7 @@ func (userRepositoryDB UserRepositoryDB) UpdateWeights(request dto.SetUserWeight
 
 	objectId, err := primitive.ObjectIDFromHex(request.Id)
 	if err != nil {
-		log.Println(err)
+		logger.Error("Error parsing Object Id from Hex: " + err.Error())
 		return nil, errs.NewUnexpectedError("ID parsing error")
 	}
 
@@ -135,6 +139,7 @@ func (userRepositoryDB UserRepositoryDB) UpdateWeights(request dto.SetUserWeight
 
 	res, err := collection.UpdateOne(ctx, filter, update)
 	if err != nil {
+		logger.Error("Error querying database: " + err.Error())
 		return nil, errs.NewNotFoundError(err.Error())
 	}
 	if res.ModifiedCount == 0 && res.MatchedCount > 0 {

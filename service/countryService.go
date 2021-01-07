@@ -4,6 +4,7 @@ import (
 	"github.com/luschnat-ziegler/cc_backend_go/domain"
 	"github.com/luschnat-ziegler/cc_backend_go/dto"
 	"github.com/luschnat-ziegler/cc_backend_go/errs"
+	"github.com/luschnat-ziegler/cc_backend_go/logger"
 )
 
 type CountryService interface {
@@ -17,6 +18,7 @@ type DefaultCountryService struct {
 func (s DefaultCountryService) GetAll() ([]*dto.GetCountryResponse, *errs.AppError) {
 	countries, err := s.repo.FindAll()
 	if err != nil {
+		logger.Error("Error returned by countryrepository.FindAll(): " + err.Message)
 		return nil, errs.NewUnexpectedError("Error in findAll method")
 	}
 	response := make([]*dto.GetCountryResponse, 0)

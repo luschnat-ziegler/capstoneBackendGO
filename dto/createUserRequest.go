@@ -12,8 +12,10 @@ type CreateUserRequest struct {
 	LastName string		`json:"last_name" validate:"required"`
 }
 
+var v *validator.Validate
+
 func (createUserRequest CreateUserRequest) Validate() *errs.ValidationError {
-	v := validator.New()
+	v = validator.New()
 	err := v.Struct(createUserRequest)
 
 	if err != nil {

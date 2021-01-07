@@ -11,7 +11,7 @@ type LogInRequest struct {
 }
 
 func (logInRequest LogInRequest) Validate() *errs.ValidationError {
-	v := validator.New()
+	v = validator.New()
 	err := v.Struct(logInRequest)
 
 	if err != nil {

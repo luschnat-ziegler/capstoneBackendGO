@@ -16,7 +16,7 @@ type SetUserWeightsRequest struct {
 }
 
 func (setUserWeightsRequest SetUserWeightsRequest) Validate() *errs.ValidationError {
-	v := validator.New()
+	v = validator.New()
 	err := v.Struct(setUserWeightsRequest)
 
 	if err != nil {

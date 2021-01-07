@@ -2,10 +2,9 @@ package domain
 
 import (
 	"context"
-	"fmt"
 	"github.com/luschnat-ziegler/cc_backend_go/errs"
+	"github.com/luschnat-ziegler/cc_backend_go/logger"
 	"go.mongodb.org/mongo-driver/bson"
-	"log"
 	"time"
 )
 
@@ -21,6 +20,7 @@ func (countryRepositoryDB CountryRepositoryDB) FindAll() ([]Country, *errs.AppEr
 
 	err := client.Connect(ctx)
 	if err != nil {
+		logger.Error("Error connecting to database: " + err.Error())
 		return nil, errs.NewUnexpectedError("Database Error")
 	}
 	defer client.Disconnect(ctx)
@@ -29,14 +29,14 @@ func (countryRepositoryDB CountryRepositoryDB) FindAll() ([]Country, *errs.AppEr
 
 	cursor, err := collection.Find(ctx, bson.D{})
 	if err != nil {
-		fmt.Println(err)
-		return nil, errs.NewUnexpectedError("Database Error")
+		logger.Error("Error querying database")
+		return nil, errs.NewUnexpectedError("Database Error: " + err.Error())
 	}
 
 	defer func() {
 		err = cursor.Close(ctx)
 		if err != nil {
-			log.Println("Could not close cursor")
+			logger.Error("Error closing cursor: " + err.Error())
 		}
 	}()
 
@@ -45,7 +45,7 @@ func (countryRepositoryDB CountryRepositoryDB) FindAll() ([]Country, *errs.AppEr
 		var country Country
 		err := cursor.Decode(&country)
 		if err != nil {
-			log.Println(err)
+			logger.Error("Error decoding database object: " + err.Error())
 			return nil, errs.NewUnexpectedError("Database Error")
 		}
 		output = append(output, country)
