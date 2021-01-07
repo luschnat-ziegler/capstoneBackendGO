@@ -7,9 +7,9 @@ type AppError struct {
 	Message string `json:"message"`
 }
 
-func (e AppError) AsMessage() *AppError {
+func (appError AppError) AsMessage() *AppError {
 	return &AppError{
-		Message: e.Message,
+		Message: appError.Message,
 	}
 }
 
@@ -60,8 +60,8 @@ func NewValidationError(invalidFields []string) *ValidationError {
 	}
 }
 
-func (e ValidationError) AsMessage() *ValidationError {
+func (validationError ValidationError) AsMessage() *ValidationError {
 	return &ValidationError{
-		InvalidFields: e.InvalidFields,
+		InvalidFields: validationError.InvalidFields,
 	}
 }
