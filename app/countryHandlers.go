@@ -11,7 +11,7 @@ type CountryHandlers struct {
 }
 
 
-func (ch *CountryHandlers) getAllCountries(w http.ResponseWriter, r *http.Request) {
+func (ch *CountryHandlers) getAllCountries(w http.ResponseWriter, _ *http.Request) {
 
 	countries, err := ch.service.GetAll()
 
