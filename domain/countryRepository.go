@@ -1,11 +1,9 @@
 package domain
 
 import (
-	"context"
 	"github.com/luschnat-ziegler/cc_backend_go/errs"
 	"github.com/luschnat-ziegler/cc_backend_go/logger"
 	"go.mongodb.org/mongo-driver/bson"
-	"time"
 )
 
 type CountryRepositoryDB struct {
@@ -13,17 +11,13 @@ type CountryRepositoryDB struct {
 
 func (countryRepositoryDB CountryRepositoryDB) FindAll() ([]Country, *errs.AppError) {
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	client := getDbClient()
-
-	err := client.Connect(ctx)
+	client, ctx, cancel, err := getDbClient()
 	if err != nil {
 		logger.Error("Error connecting to database: " + err.Error())
 		return nil, errs.NewUnexpectedError("Database Error")
 	}
-	defer client.Disconnect(ctx)
+	defer disconnectClient(client, ctx)
+	defer cancel()
 
 	collection := client.Database("countrycheck").Collection("countries")
 

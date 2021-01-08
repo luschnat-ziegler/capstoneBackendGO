@@ -1,30 +1,25 @@
 package domain
 
 import (
-	"context"
 	"github.com/luschnat-ziegler/cc_backend_go/dto"
 	"github.com/luschnat-ziegler/cc_backend_go/errs"
 	"github.com/luschnat-ziegler/cc_backend_go/logger"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
-	"time"
 )
 
 type UserRepositoryDB struct {}
 
 func (userRepositoryDB UserRepositoryDB) ByEmail(email string) (*User, *error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
 
-	client := getDbClient()
-
-	err := client.Connect(ctx)
+	client, ctx, cancel, err := getDbClient()
 	if err != nil {
 		logger.Error("Error connecting to database: " + err.Error())
 		return nil, &err
 	}
-	defer client.Disconnect(ctx)
+	defer disconnectClient(client, ctx)
+	defer cancel()
 
 	collection := client.Database("countrycheck").Collection("user")
 
@@ -40,16 +35,13 @@ func (userRepositoryDB UserRepositoryDB) ByEmail(email string) (*User, *error) {
 
 func (userRepositoryDB UserRepositoryDB) ById(id string) (*User, *errs.AppError) {
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	client := getDbClient()
-
-	err := client.Connect(ctx)
+	client, ctx, cancel, err := getDbClient()
 	if err != nil {
 		logger.Error("Error connecting to database: " + err.Error())
+		return nil, errs.NewUnexpectedError("Database error")
 	}
-	defer client.Disconnect(ctx)
+	defer disconnectClient(client, ctx)
+	defer cancel()
 
 	collection := client.Database("countrycheck").Collection("user")
 
@@ -65,16 +57,13 @@ func (userRepositoryDB UserRepositoryDB) ById(id string) (*User, *errs.AppError)
 
 func (userRepositoryDB UserRepositoryDB) Save(user User) (*string, *errs.AppError) {
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	client := getDbClient()
-
-	err := client.Connect(ctx)
+	client, ctx, cancel, err := getDbClient()
 	if err != nil {
 		logger.Error("Error connecting to database: " + err.Error())
+		return nil, errs.NewUnexpectedError("Database error")
 	}
-	defer client.Disconnect(ctx)
+	defer disconnectClient(client, ctx)
+	defer cancel()
 
 	collection := client.Database("countrycheck").Collection("user")
 
@@ -104,17 +93,13 @@ func (userRepositoryDB UserRepositoryDB) Save(user User) (*string, *errs.AppErro
 
 func (userRepositoryDB UserRepositoryDB) UpdateWeights(request dto.SetUserWeightsRequest) (*dto.SetUserWeightsResponse, *errs.AppError) {
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	client := getDbClient()
-
-	err := client.Connect(ctx)
+	client, ctx, cancel, err := getDbClient()
 	if err != nil {
 		logger.Error("Error connecting to database: " + err.Error())
 		return nil, errs.NewUnexpectedError("Database error")
 	}
-	defer client.Disconnect(ctx)
+	defer disconnectClient(client, ctx)
+	defer cancel()
 
 	collection := client.Database("countrycheck").Collection("user")
 
