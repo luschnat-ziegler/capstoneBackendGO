@@ -7,6 +7,7 @@ import (
 	"github.com/luschnat-ziegler/cc_backend_go/logger"
 )
 
+//go:generate mockgen -destination=../mocks/service/mockCountryService.go -package=service github.com/luschnat-ziegler/cc_backend_go/service CountryService
 type CountryService interface {
 	GetAll() ([]*dto.GetCountryResponse, *errs.AppError)
 }
