@@ -2,12 +2,10 @@ package app
 
 import (
 	"encoding/json"
-	"github.com/dgrijalva/jwt-go"
 	"github.com/luschnat-ziegler/cc_backend_go/dto"
 	"github.com/luschnat-ziegler/cc_backend_go/errs"
 	"github.com/luschnat-ziegler/cc_backend_go/service"
 	"net/http"
-	"os"
 )
 
 type UserHandlers struct {
@@ -75,18 +73,4 @@ func (uh *UserHandlers) UpdateUserWeights(w http. ResponseWriter, r *http.Reques
 			}
 		}
 	}
-}
-
-func userIdStringFromToken (r *http.Request) (*string, error) {
-	secret, _ := os.LookupEnv("JWT_SECRET")
-	authHeader := r.Header.Get("Authorization")
-	tokenString := getTokenFromHeader(authHeader)
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return []byte(secret), nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	idAsString := token.Claims.(jwt.MapClaims)["sub"].(string)
-	return &idAsString, nil
 }

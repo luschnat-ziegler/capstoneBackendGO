@@ -6,7 +6,6 @@ import (
 	"github.com/luschnat-ziegler/cc_backend_go/errs"
 	"net/http"
 	"os"
-	"strings"
 )
 
 type AuthMiddleware struct {}
@@ -40,12 +39,4 @@ func (am AuthMiddleware) authorizationHandler() func(http.Handler) http.Handler 
 			}
 		})
 	}
-}
-
-func getTokenFromHeader(header string) string {
-	splitToken := strings.Split(header, "Bearer")
-	if len(splitToken) == 2 {
-		return strings.TrimSpace(splitToken[1])
-	}
-	return ""
 }
