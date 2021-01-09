@@ -16,17 +16,11 @@ type UserHandlers struct {
 
 func (uh *UserHandlers) GetUserById(w http.ResponseWriter, r *http.Request) {
 
-	secret,_ := os.LookupEnv("JWT_SECRET")
-	authHeader := r.Header.Get("Authorization")
-	tokenString := getTokenFromHeader(authHeader)
-
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return []byte(secret), nil
-	})
+	idAsString, err := userIdStringFromToken(r)
 	if err != nil {
 		writeResponse(w, http.StatusBadRequest, errs.NewBadRequestError("Invalid token").AsMessage())
 	} else {
-		user, appError := uh.service.GetUser(token.Claims.(jwt.MapClaims)["sub"].(string))
+		user, appError := uh.service.GetUser(*idAsString)
 		if appError != nil {
 			writeResponse(w, http.StatusBadRequest, appError.AsMessage())
 		} else {
@@ -67,16 +61,11 @@ func (uh *UserHandlers) UpdateUserWeights(w http. ResponseWriter, r *http.Reques
 		if validationError != nil {
 			writeResponse(w, validationError.Code, validationError.AsMessage())
 		} else {
-			secret, _ := os.LookupEnv("JWT_SECRET")
-			authHeader := r.Header.Get("Authorization")
-			tokenString := getTokenFromHeader(authHeader)
-			token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-				return []byte(secret), nil
-			})
+			idAsString, err := userIdStringFromToken(r)
 			if err != nil {
 				writeResponse(w, http.StatusBadRequest, errs.NewBadRequestError("Invalid token").AsMessage())
 			} else {
-				setUserWeightsRequest.Id = token.Claims.(jwt.MapClaims)["sub"].(string)
+				setUserWeightsRequest.Id = *idAsString
 				result, appError := uh.service.UpdateWeights(setUserWeightsRequest)
 				if appError != nil {
 					writeResponse(w, appError.Code, appError.AsMessage())
@@ -86,4 +75,18 @@ func (uh *UserHandlers) UpdateUserWeights(w http. ResponseWriter, r *http.Reques
 			}
 		}
 	}
+}
+
+func userIdStringFromToken (r *http.Request) (*string, error) {
+	secret, _ := os.LookupEnv("JWT_SECRET")
+	authHeader := r.Header.Get("Authorization")
+	tokenString := getTokenFromHeader(authHeader)
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return []byte(secret), nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	idAsString := token.Claims.(jwt.MapClaims)["sub"].(string)
+	return &idAsString, nil
 }

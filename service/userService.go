@@ -6,6 +6,7 @@ import (
 	"github.com/luschnat-ziegler/cc_backend_go/errs"
 )
 
+//go:generate mockgen -destination=../mocks/service/mockUserService.go -package=service github.com/luschnat-ziegler/cc_backend_go/service UserService
 type UserService interface {
 	CreateUser(request dto.CreateUserRequest) (*dto.CreateUserResponse, *errs.AppError)
 	GetUser(string) (*dto.GetUserResponse, *errs.AppError)

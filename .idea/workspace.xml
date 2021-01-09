@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c405ffb5-2ae5-41b2-92a1-1bd975c4e4fc" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/mocks/service/mockUserService.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/countryHandlers_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/countryHandlers_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/countryService.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/countryService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/userHandlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/userHandlers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/userService.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/userService.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,6 +34,7 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
