@@ -5,6 +5,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/gorilla/mux"
 	"github.com/luschnat-ziegler/cc_backend_go/dto"
+	"github.com/luschnat-ziegler/cc_backend_go/errs"
 	"github.com/luschnat-ziegler/cc_backend_go/mocks/service"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
@@ -18,10 +19,11 @@ func intPtr(i int) *int {
 
 func Test_should_return_countries_with_status_code_200(t *testing.T) {
 
-	// Arrange
 	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
 	mockService := service.NewMockCountryService(ctrl)
+	ch := CountryHandlers{mockService}
+	router := mux.NewRouter()
+
 	dummyCountries := []*dto.GetCountryResponse{
 		{
 			ID: primitive.NewObjectID(),
@@ -48,10 +50,10 @@ func Test_should_return_countries_with_status_code_200(t *testing.T) {
 			Total: intPtr(56),
 		},
 	}
-	mockService.EXPECT().GetAll().Return(dummyCountries, nil)
-	ch := CountryHandlers{mockService}
 
-	router := mux.NewRouter()
+	mockService.EXPECT().GetAll().Return(dummyCountries, nil)
+
+	router = mux.NewRouter()
 	router.HandleFunc("/countries", ch.getAllCountries)
 
 	request, _ := http.NewRequest(http.MethodGet, "/countries", nil)
@@ -76,5 +78,39 @@ func Test_should_return_countries_with_status_code_200(t *testing.T) {
 			t.Error("Response does not correspond to data")
 			break
 		}
+	}
+}
+
+func Test_should_return_statue_code_500_with_error_message (t *testing.T) {
+	// Arrange
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockService := service.NewMockCountryService(ctrl)
+
+	mockReturnError := errs.NewUnexpectedError("Unexpected server error")
+	mockService.EXPECT().GetAll().Return(nil, mockReturnError)
+	ch := CountryHandlers{mockService}
+
+	router := mux.NewRouter()
+	router.HandleFunc("/countries", ch.getAllCountries)
+
+	request, _ := http.NewRequest(http.MethodGet, "/countries", nil)
+
+	// Act
+	recorder := httptest.NewRecorder()
+	router.ServeHTTP(recorder, request)
+
+	// Assert
+	if recorder.Code != http.StatusInternalServerError {
+		t.Error("Failed while writing the code")
+	}
+
+	var resultError errs.AppError
+	if err := json.NewDecoder(recorder.Body).Decode(&resultError); err != nil {
+		t.Error("Failed to re-decode response body")
+	}
+
+	if resultError.Message != mockReturnError.Message {
+		t.Error("Response error message does not match")
 	}
 }

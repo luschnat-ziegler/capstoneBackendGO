@@ -19,7 +19,7 @@ type DefaultCountryService struct {
 func (s DefaultCountryService) GetAll() ([]*dto.GetCountryResponse, *errs.AppError) {
 	countries, err := s.repo.FindAll()
 	if err != nil {
-		logger.Error("Error returned by countryrepository.FindAll(): " + err.Message)
+		logger.Error("Error returned by CountryRepository.FindAll(): " + err.Message)
 		return nil, errs.NewUnexpectedError("Error in findAll method")
 	}
 	response := make([]*dto.GetCountryResponse, 0)
