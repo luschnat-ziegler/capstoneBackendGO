@@ -2,11 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c405ffb5-2ae5-41b2-92a1-1bd975c4e4fc" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/app.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/app.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/userHandlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/userHandlers.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/utilityFunctions.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/utilityFunctions.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,7 +50,12 @@
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
   </component>
-  <component name="RunManager" selected="Go Test.Test_should_return_statue_code_500_with_error_message in github.com/luschnat-ziegler/cc_backend_go/app">
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Go Test.Test_should_return_countries_with_status_code_200 in github.com/luschnat-ziegler/cc_backend_go/app">
     <configuration name="Test_should_return_countries_with_status_code_200 in github.com/luschnat-ziegler/cc_backend_go/app" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="cc_backend_go" />
       <working_directory value="$PROJECT_DIR$/app" />
@@ -85,8 +90,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Test.Test_should_return_statue_code_500_with_error_message in github.com/luschnat-ziegler/cc_backend_go/app" />
         <item itemvalue="Go Test.Test_should_return_countries_with_status_code_200 in github.com/luschnat-ziegler/cc_backend_go/app" />
+        <item itemvalue="Go Test.Test_should_return_statue_code_500_with_error_message in github.com/luschnat-ziegler/cc_backend_go/app" />
         <item itemvalue="Go Test.go test github.com/luschnat-ziegler/cc_backend_go/app" />
       </list>
     </recent_temporary>

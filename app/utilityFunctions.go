@@ -2,14 +2,12 @@ package app
 
 import (
 	"encoding/json"
-	"github.com/dgrijalva/jwt-go"
 	"net/http"
-	"os"
 	"strings"
 )
 
-//go:generate mockgen -destination=../mocks/app/mockGetUserIdStringFromToken.go -package=app github.com/luschnat-ziegler/cc_backend_go/app GetUserIdStringFromToken
-func GetUserIdStringFromToken(r *http.Request) (*string, error) {
+/*
+func getUserIdStringFromToken(r *http.Request) (*string, error) {
 	secret, _ := os.LookupEnv("JWT_SECRET")
 	authHeader := r.Header.Get("Authorization")
 	tokenString := getTokenFromHeader(authHeader)
@@ -22,6 +20,7 @@ func GetUserIdStringFromToken(r *http.Request) (*string, error) {
 	idAsString := token.Claims.(jwt.MapClaims)["sub"].(string)
 	return &idAsString, nil
 }
+*/
 
 func writeResponse(w http.ResponseWriter, code int, data interface{}) {
 	w.Header().Add("Content-Type", "application/json")

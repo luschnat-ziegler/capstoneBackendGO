@@ -34,11 +34,11 @@ func Start() {
 		Methods(http.MethodPost).
 		Name("CreateUser")
 
-	router.HandleFunc("/user/", uh.GetUserById).
+	router.HandleFunc("/user/{id}", uh.GetUserById).
 		Methods(http.MethodGet).
 		Name("GetUser")
 
-	router.HandleFunc("/user", uh.UpdateUserWeights).
+	router.HandleFunc("/user/{id}", uh.UpdateUserWeights).
 		Methods(http.MethodPatch).
 		Name("UpdateUserWeights")
 
