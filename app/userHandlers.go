@@ -14,7 +14,7 @@ type UserHandlers struct {
 
 func (uh *UserHandlers) GetUserById(w http.ResponseWriter, r *http.Request) {
 
-	idAsString, err := userIdStringFromToken(r)
+	idAsString, err := GetUserIdStringFromToken(r)
 	if err != nil {
 		writeResponse(w, http.StatusBadRequest, errs.NewBadRequestError("Invalid token").AsMessage())
 	} else {
@@ -59,7 +59,7 @@ func (uh *UserHandlers) UpdateUserWeights(w http. ResponseWriter, r *http.Reques
 		if validationError != nil {
 			writeResponse(w, validationError.Code, validationError.AsMessage())
 		} else {
-			idAsString, err := userIdStringFromToken(r)
+			idAsString, err := GetUserIdStringFromToken(r)
 			if err != nil {
 				writeResponse(w, http.StatusBadRequest, errs.NewBadRequestError("Invalid token").AsMessage())
 			} else {

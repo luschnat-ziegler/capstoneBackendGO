@@ -8,7 +8,8 @@ import (
 	"strings"
 )
 
-func userIdStringFromToken (r *http.Request) (*string, error) {
+//go:generate mockgen -destination=../mocks/app/mockGetUserIdStringFromToken.go -package=app github.com/luschnat-ziegler/cc_backend_go/app GetUserIdStringFromToken
+func GetUserIdStringFromToken(r *http.Request) (*string, error) {
 	secret, _ := os.LookupEnv("JWT_SECRET")
 	authHeader := r.Header.Get("Authorization")
 	tokenString := getTokenFromHeader(authHeader)
