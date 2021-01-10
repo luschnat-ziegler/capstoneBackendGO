@@ -19,6 +19,7 @@ func intPtr(i int) *int {
 
 func Test_should_return_countries_with_status_code_200(t *testing.T) {
 
+	// Arrange
 	ctrl := gomock.NewController(t)
 	mockService := service.NewMockCountryService(ctrl)
 	ch := CountryHandlers{mockService}
