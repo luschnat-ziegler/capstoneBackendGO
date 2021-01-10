@@ -11,6 +11,7 @@ import (
 	"time"
 )
 
+//go:generate mockgen -destination=../mocks/service/mockAuthService.go -package=service github.com/luschnat-ziegler/cc_backend_go/service AuthService
 type AuthService interface {
 	LogIn(request dto.LogInRequest) (*dto.LogInResponse, *errs.AppError)
 }

@@ -23,15 +23,25 @@ func (am AuthMiddleware) authorizationHandler() func(http.Handler) http.Handler 
 			} else if secret, ok := os.LookupEnv("JWT_SECRET"); !ok {
 				appError := errs.NewUnexpectedError("Unexpected server error")
 				writeResponse(w, appError.Code, appError.AsMessage())
-			} else if token , err := jwt.Parse(getTokenFromHeader(authHeader), func(token *jwt.Token) (interface{}, error) {return []byte(secret), nil}); err != nil {
+			} else if token , err := parseToken(authHeader, secret); err != nil {
 				appError := errs.NewUnauthorizedError("Token invalid")
 				writeResponse(w, appError.Code, appError.AsMessage())
 			} else if token.Claims.(jwt.MapClaims)["sub"].(string) != mux.Vars(r)["id"] {
-				appError := errs.NewUnauthorizedError("Token not matching user")
+				appError := errs.NewUnauthorizedError("Token not matching requested user")
 				writeResponse(w, appError.Code, appError.AsMessage())
 			} else {
 				next.ServeHTTP(w, r)
 			}
 		})
 	}
+
+}
+
+func parseToken(authHeader, secret string) (*jwt.Token, error) {
+	token, err := jwt.Parse(getTokenFromHeader(authHeader),
+		func(token *jwt.Token) (interface{}, error) {return []byte(secret), nil})
+	if err != nil {
+		return nil, err
+	}
+	return token, nil
 }
