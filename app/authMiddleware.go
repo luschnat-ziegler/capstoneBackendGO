@@ -17,25 +17,20 @@ func (am AuthMiddleware) authorizationHandler() func(http.Handler) http.Handler 
 			currentRouteName := mux.CurrentRoute(r).GetName()
 			if !((currentRouteName == "GetUser") || (currentRouteName == "UpdateUserWeights")) {
 				next.ServeHTTP(w, r)
+			} else if authHeader := r.Header.Get("Authorization"); authHeader == "" {
+				appError := errs.NewUnauthorizedError("Token missing")
+				writeResponse(w, appError.Code, appError.AsMessage())
+			} else if secret, ok := os.LookupEnv("JWT_SECRET"); !ok {
+				appError := errs.NewUnexpectedError("Unexpected server error")
+				writeResponse(w, appError.Code, appError.AsMessage())
+			} else if token , err := jwt.Parse(getTokenFromHeader(authHeader), func(token *jwt.Token) (interface{}, error) {return []byte(secret), nil}); err != nil {
+				appError := errs.NewUnauthorizedError("Token invalid")
+				writeResponse(w, appError.Code, appError.AsMessage())
+			} else if token.Claims.(jwt.MapClaims)["sub"].(string) != mux.Vars(r)["id"] {
+				appError := errs.NewUnauthorizedError("Token not matching user")
+				writeResponse(w, appError.Code, appError.AsMessage())
 			} else {
-				authHeader := r.Header.Get("Authorization")
-				if authHeader != "" {
-					secret , _ := os.LookupEnv("JWT_SECRET")
-					tokenString := getTokenFromHeader(authHeader)
-
-					_ , err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-						return []byte(secret), nil
-					})
-					if err != nil {
-						appError := errs.NewUnauthorizedError("Token invalid")
-						writeResponse(w, appError.Code, appError.AsMessage())
-					} else {
-						next.ServeHTTP(w, r)
-					}
-				} else {
-					appError := errs.NewUnauthorizedError("Token missing")
-					writeResponse(w, appError.Code, appError.AsMessage())
-				}
+				next.ServeHTTP(w, r)
 			}
 		})
 	}
