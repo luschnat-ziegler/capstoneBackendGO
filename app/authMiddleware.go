@@ -6,7 +6,6 @@ import (
 	"github.com/luschnat-ziegler/cc_backend_go/errs"
 	"net/http"
 	"os"
-	"strings"
 )
 
 type AuthMiddleware struct {}
@@ -18,34 +17,31 @@ func (am AuthMiddleware) authorizationHandler() func(http.Handler) http.Handler 
 			currentRouteName := mux.CurrentRoute(r).GetName()
 			if !((currentRouteName == "GetUser") || (currentRouteName == "UpdateUserWeights")) {
 				next.ServeHTTP(w, r)
+			} else if authHeader := r.Header.Get("Authorization"); authHeader == "" {
+				appError := errs.NewUnauthorizedError("Token missing")
+				writeResponse(w, appError.Code, appError.AsMessage())
+			} else if secret, ok := os.LookupEnv("JWT_SECRET"); !ok {
+				appError := errs.NewUnexpectedError("Unexpected server error")
+				writeResponse(w, appError.Code, appError.AsMessage())
+			} else if token , err := parseToken(authHeader, secret); err != nil {
+				appError := errs.NewUnauthorizedError("Token invalid")
+				writeResponse(w, appError.Code, appError.AsMessage())
+			} else if token.Claims.(jwt.MapClaims)["sub"].(string) != mux.Vars(r)["id"] {
+				appError := errs.NewUnauthorizedError("Token not matching requested user")
+				writeResponse(w, appError.Code, appError.AsMessage())
 			} else {
-				authHeader := r.Header.Get("Authorization")
-				if authHeader != "" {
-					secret , _ := os.LookupEnv("JWT_SECRET")
-					tokenString := getTokenFromHeader(authHeader)
-
-					_ , err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-						return []byte(secret), nil
-					})
-					if err != nil {
-						appError := errs.NewUnauthorizedError("Token invalid")
-						writeResponse(w, appError.Code, appError.AsMessage())
-					} else {
-						next.ServeHTTP(w, r)
-					}
-				} else {
-					appError := errs.NewUnauthorizedError("Token missing")
-					writeResponse(w, appError.Code, appError.AsMessage())
-				}
+				next.ServeHTTP(w, r)
 			}
 		})
 	}
+
 }
 
-func getTokenFromHeader(header string) string {
-	splitToken := strings.Split(header, "Bearer")
-	if len(splitToken) == 2 {
-		return strings.TrimSpace(splitToken[1])
+func parseToken(authHeader, secret string) (*jwt.Token, error) {
+	token, err := jwt.Parse(getTokenFromHeader(authHeader),
+		func(token *jwt.Token) (interface{}, error) {return []byte(secret), nil})
+	if err != nil {
+		return nil, err
 	}
-	return ""
+	return token, nil
 }
