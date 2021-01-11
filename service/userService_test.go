@@ -11,6 +11,10 @@ import (
 	"testing"
 )
 
+func intPtr(i int) *int {
+	return &i
+}
+
 // ##########
 // CreateUser
 // ##########
@@ -97,7 +101,7 @@ func Test_CreateUser_returns_nil_and_AppError_if_repo_method_returns_error (t *t
 // GetUser
 // #######
 
-func Test_GetUser_returns_GetUserResponse_and_nil_if_repo_method_returns_no_error (t *testing.T) {
+func Test_GetUser_should_return_GetUserRequest_and_nil_called_with_valid_id (t *testing.T) {
 
 	// Arrange
 	ctrl := gomock.NewController(t)
@@ -110,12 +114,12 @@ func Test_GetUser_returns_GetUserResponse_and_nil_if_repo_method_returns_no_erro
 		Password:          "password",
 		FirstName:         "Testy",
 		LastName:          "McTestface",
-		WeightEnvironment: 1,
+		WeightEnvironment: 2,
 		WeightGender:      2,
-		WeightLgbtq:       3,
-		WeightEquality:    0,
+		WeightLgbtq:       1,
+		WeightEquality:    3,
 		WeightCorruption:  4,
-		WeightFreedom:     1,
+		WeightFreedom:     0,
 	}
 
 	mockRepository.EXPECT().ById("test_id").Return(&user, nil)
@@ -134,40 +138,39 @@ func Test_GetUser_returns_GetUserResponse_and_nil_if_repo_method_returns_no_erro
 	}
 
 	resultString := fmt.Sprintf("%v", result)
-	if resultString != "&{test@test.de Testy McTestface 1 2 3 0 4 1}" {
-		t.Error("Returned GetUserResponse does not match input data")
+	expected := "&{test@test.de Testy McTestface 2 2 1 3 4 0}"
+	if result != nil && resultString != expected {
+		t.Error("Returned value does not match")
 	}
 }
 
-func Test_GetUser_returns_nil_and_AppError_if_repo_method_returns_error (t *testing.T) {
+func Test_GetUser_should_return_nil_and_AppError_if_repo_method_returns_error (t *testing.T) {
 
 	// Arrange
 	ctrl := gomock.NewController(t)
 	mockRepository := domain.NewMockUserRepository(ctrl)
 	service := NewUserService(mockRepository)
-
+	
 	mockAppError := errs.NewUnexpectedError("unexpected server error")
+
 	mockRepository.EXPECT().ById("test_id").Return(nil, mockAppError)
 
 	// Act
 	result, err := service.GetUser("test_id")
-
+	
 	// Assert
-	if err == nil {
-		t.Error("Nil returned, *AppError expected")
-	}
-
 	if result != nil {
-		t.Error("Result returned, nil expected")
+		t.Error("Result not nil, nil expected")
+	}
+	
+	if err == nil {
+		t.Error("Error nil, *AppError expected")
 	}
 
-	errorType := fmt.Sprintf("%T", err)
-	if errorType != "*errs.AppError" {
-		t.Error("Wrong type returned")
-	}
-
-	if err != nil && (err.Code != 500 || err.Message != "unexpected server error") {
-		t.Error("Wrong error code and/or message returned")
+	errorString := fmt.Sprintf("%v", result)
+	expected := "&{500 unexpected server error}"
+	if result != nil && errorString != expected {
+		t.Error("Returned error does not match")
 	}
 }
 
@@ -175,3 +178,28 @@ func Test_GetUser_returns_nil_and_AppError_if_repo_method_returns_error (t *test
 // UpdateWeights
 // #############
 
+/*
+func Test_UpdateWeights_should_return_SetUserWeightsResponse_and_nil_called_with_SetUserWeightsRequest (t *testing.T) {
+
+	// Arrange
+	ctrl := gomock.NewController(t)
+	mockRepository := domain.NewMockUserRepository(ctrl)
+	service := NewUserService(mockRepository)
+
+	mockSetUserWeightsRequest := dto.SetUserWeightsRequest{
+		Id:                "test_id",
+		WeightEnvironment: intPtr(1),
+		WeightGender:      intPtr(2),
+		WeightLgbtq:       intPtr(3),
+		WeightEquality:    intPtr(0),
+		WeightCorruption:  intPtr(4),
+		WeightFreedom:     intPtr(2),
+	}
+
+	mockSetUserWeightsResponse := dto.SetUserWeightsResponse{
+		Matched: true,
+		Updated: true,
+	}
+}
+
+ */
