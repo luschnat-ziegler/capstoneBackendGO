@@ -19,6 +19,7 @@ type Country struct {
 	Total *int `json:"total,omitempty" bson:"total,omitempty"`
 }
 
+//go:generate mockgen -destination=../mocks/domain/mockCountryRepository.go -package=domain github.com/luschnat-ziegler/cc_backend_go/domain CountryRepository
 type CountryRepository interface {
 	FindAll() ([]Country, *errs.AppError)
 }
