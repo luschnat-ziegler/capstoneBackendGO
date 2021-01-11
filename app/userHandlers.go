@@ -21,7 +21,7 @@ func (uh *UserHandlers) GetUserById(w http.ResponseWriter, r *http.Request) {
 	} else {
 		user, appError := uh.service.GetUser(id)
 		if appError != nil {
-			writeResponse(w, http.StatusBadRequest, appError.AsMessage())
+			writeResponse(w, appError.Code, appError.AsMessage())
 		} else {
 			writeResponse(w, http.StatusOK, user)
 		}

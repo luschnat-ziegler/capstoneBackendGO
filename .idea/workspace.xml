@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c405ffb5-2ae5-41b2-92a1-1bd975c4e4fc" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/authHandlers_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/userHandlers_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/countryHandlers_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/countryHandlers_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dto/LogInRequest.go" beforeDir="false" afterPath="$PROJECT_DIR$/dto/LogInRequest.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/userHandlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/userHandlers.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,8 +53,8 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Test.Test_should_return_error_with_code_if_service_returns_error in github.com/luschnat-ziegler/cc_backend_go/app">
-    <configuration name="Test_should_return_code_400_with_invalid_json_in_request in github.com/luschnat-ziegler/cc_backend_go/app" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Go Test.Test_updateUserWeights_should_return_error_with_code_if_service_returns_error in github.com/luschnat-ziegler/cc_backend_go/app">
+    <configuration name="Test_updateUserWeights_should_return_code_200_and_corresponding_response_with_valid_request in github.com/luschnat-ziegler/cc_backend_go/app" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="cc_backend_go" />
       <working_directory value="$PROJECT_DIR$/app" />
       <framework value="gotest" />
@@ -63,10 +62,10 @@
       <package value="github.com/luschnat-ziegler/cc_backend_go/app" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
-      <pattern value="^\QTest_should_return_code_400_with_invalid_json_in_request\E$" />
+      <pattern value="^\QTest_updateUserWeights_should_return_code_200_and_corresponding_response_with_valid_request\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="Test_should_return_code_422_and_validation_error_message_with_invalid_request in github.com/luschnat-ziegler/cc_backend_go/app" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="Test_updateUserWeights_should_return_code_201_and_corresponding_response_with_valid_request in github.com/luschnat-ziegler/cc_backend_go/app" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="cc_backend_go" />
       <working_directory value="$PROJECT_DIR$/app" />
       <framework value="gotest" />
@@ -74,10 +73,10 @@
       <package value="github.com/luschnat-ziegler/cc_backend_go/app" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
-      <pattern value="^\QTest_should_return_code_422_and_validation_error_message_with_invalid_request\E$" />
+      <pattern value="^\QTest_updateUserWeights_should_return_code_201_and_corresponding_response_with_valid_request\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="Test_should_return_error_with_code_if_service_returns_error in github.com/luschnat-ziegler/cc_backend_go/app" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="Test_updateUserWeights_should_return_code_400_and_error_message_with_invalid_json_body in github.com/luschnat-ziegler/cc_backend_go/app" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="cc_backend_go" />
       <working_directory value="$PROJECT_DIR$/app" />
       <framework value="gotest" />
@@ -85,10 +84,10 @@
       <package value="github.com/luschnat-ziegler/cc_backend_go/app" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
-      <pattern value="^\QTest_should_return_error_with_code_if_service_returns_error\E$" />
+      <pattern value="^\QTest_updateUserWeights_should_return_code_400_and_error_message_with_invalid_json_body\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="Test_should_return_status_code_200_and_success_response_with_valid_request in github.com/luschnat-ziegler/cc_backend_go/app" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="Test_updateUserWeights_should_return_code_422_and_validation_message_with_invalid_request in github.com/luschnat-ziegler/cc_backend_go/app" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="cc_backend_go" />
       <working_directory value="$PROJECT_DIR$/app" />
       <framework value="gotest" />
@@ -96,10 +95,10 @@
       <package value="github.com/luschnat-ziegler/cc_backend_go/app" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
-      <pattern value="^\QTest_should_return_status_code_200_and_success_response_with_valid_request\E$" />
+      <pattern value="^\QTest_updateUserWeights_should_return_code_422_and_validation_message_with_invalid_request\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="Test_should_return_status_code_200_with_valid_request in github.com/luschnat-ziegler/cc_backend_go/app" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="Test_updateUserWeights_should_return_error_with_code_if_service_returns_error in github.com/luschnat-ziegler/cc_backend_go/app" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="cc_backend_go" />
       <working_directory value="$PROJECT_DIR$/app" />
       <framework value="gotest" />
@@ -107,16 +106,16 @@
       <package value="github.com/luschnat-ziegler/cc_backend_go/app" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
-      <pattern value="^\QTest_should_return_status_code_200_with_valid_request\E$" />
+      <pattern value="^\QTest_updateUserWeights_should_return_error_with_code_if_service_returns_error\E$" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Test.Test_should_return_error_with_code_if_service_returns_error in github.com/luschnat-ziegler/cc_backend_go/app" />
-        <item itemvalue="Go Test.Test_should_return_code_422_and_validation_error_message_with_invalid_request in github.com/luschnat-ziegler/cc_backend_go/app" />
-        <item itemvalue="Go Test.Test_should_return_code_400_with_invalid_json_in_request in github.com/luschnat-ziegler/cc_backend_go/app" />
-        <item itemvalue="Go Test.Test_should_return_status_code_200_and_success_response_with_valid_request in github.com/luschnat-ziegler/cc_backend_go/app" />
-        <item itemvalue="Go Test.Test_should_return_status_code_200_with_valid_request in github.com/luschnat-ziegler/cc_backend_go/app" />
+        <item itemvalue="Go Test.Test_updateUserWeights_should_return_error_with_code_if_service_returns_error in github.com/luschnat-ziegler/cc_backend_go/app" />
+        <item itemvalue="Go Test.Test_updateUserWeights_should_return_code_422_and_validation_message_with_invalid_request in github.com/luschnat-ziegler/cc_backend_go/app" />
+        <item itemvalue="Go Test.Test_updateUserWeights_should_return_code_400_and_error_message_with_invalid_json_body in github.com/luschnat-ziegler/cc_backend_go/app" />
+        <item itemvalue="Go Test.Test_updateUserWeights_should_return_code_200_and_corresponding_response_with_valid_request in github.com/luschnat-ziegler/cc_backend_go/app" />
+        <item itemvalue="Go Test.Test_updateUserWeights_should_return_code_201_and_corresponding_response_with_valid_request in github.com/luschnat-ziegler/cc_backend_go/app" />
       </list>
     </recent_temporary>
   </component>
