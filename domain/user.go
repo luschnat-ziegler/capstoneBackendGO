@@ -20,6 +20,7 @@ type User struct {
 	WeightFreedom int
 }
 
+//go:generate mockgen -destination=../mocks/domain/mockUserRepository.go -package=domain github.com/luschnat-ziegler/cc_backend_go/domain UserRepository
 type UserRepository interface {
 	ById(string) (*User, *errs.AppError)
 	ByEmail(string) (*User, *error)
