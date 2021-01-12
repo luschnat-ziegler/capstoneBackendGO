@@ -178,7 +178,7 @@ func Test_GetUser_should_return_nil_and_AppError_if_repo_method_returns_error (t
 // UpdateWeights
 // #############
 
-/*
+
 func Test_UpdateWeights_should_return_SetUserWeightsResponse_and_nil_called_with_SetUserWeightsRequest (t *testing.T) {
 
 	// Arrange
@@ -200,6 +200,66 @@ func Test_UpdateWeights_should_return_SetUserWeightsResponse_and_nil_called_with
 		Matched: true,
 		Updated: true,
 	}
+
+	mockRepository.EXPECT().UpdateWeights(mockSetUserWeightsRequest).Return(&mockSetUserWeightsResponse, nil)
+
+	// Act
+	result, err := service.UpdateWeights(mockSetUserWeightsRequest)
+
+	// Assert
+	if err != nil {
+		t.Error("Error returned, nil expected.")
+	}
+
+	resultType := fmt.Sprintf("%T", result)
+	if resultType != "*dto.SetUserWeightsResponse" {
+		t.Error("Wrong type returned")
+	}
+
+	resultString := fmt.Sprintf("%v", result)
+	expected := "&{true true}"
+	if result != nil && resultString != expected {
+		t.Error("Returned value does not match")
+	}
 }
 
- */
+func Test_UpdateWeights_should_return_nil_and_AppError_if_repo_method_returns_error (t *testing.T) {
+
+	// Arrange
+	ctrl := gomock.NewController(t)
+	mockRepository := domain.NewMockUserRepository(ctrl)
+	service := NewUserService(mockRepository)
+
+	mockSetUserWeightsRequest := dto.SetUserWeightsRequest{
+		Id:                "test_id",
+		WeightEnvironment: intPtr(1),
+		WeightGender:      intPtr(2),
+		WeightLgbtq:       intPtr(3),
+		WeightEquality:    intPtr(0),
+		WeightCorruption:  intPtr(4),
+		WeightFreedom:     intPtr(2),
+	}
+
+	mockAppError := errs.NewUnexpectedError("unexpected server error")
+
+	mockRepository.EXPECT().UpdateWeights(mockSetUserWeightsRequest).Return(nil, mockAppError)
+
+	// Act
+	result, err := service.UpdateWeights(mockSetUserWeightsRequest)
+
+	// Assert
+	if result != nil {
+		t.Error("Result not nil, nil expected")
+	}
+
+	if err == nil {
+		t.Error("Error nil, *AppError expected")
+	}
+
+	errorString := fmt.Sprintf("%v", result)
+	expected := "&{500 unexpected server error}"
+	if result != nil && errorString != expected {
+		t.Error("Returned error does not match")
+	}
+}
+
