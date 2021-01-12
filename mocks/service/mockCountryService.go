@@ -35,10 +35,10 @@ func (m *MockCountryService) EXPECT() *MockCountryServiceMockRecorder {
 }
 
 // GetAll mocks base method
-func (m *MockCountryService) GetAll() ([]*dto.GetCountryResponse, *errs.AppError) {
+func (m *MockCountryService) GetAll() ([]dto.GetCountryResponse, *errs.AppError) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAll")
-	ret0, _ := ret[0].([]*dto.GetCountryResponse)
+	ret0, _ := ret[0].([]dto.GetCountryResponse)
 	ret1, _ := ret[1].(*errs.AppError)
 	return ret0, ret1
 }

@@ -24,8 +24,8 @@ type CountryRepository interface {
 	FindAll() ([]Country, *errs.AppError)
 }
 
-func (c Country) ToGetCountryResponseDto() *dto.GetCountryResponse {
-	return &dto.GetCountryResponse{
+func (c Country) ToGetCountryResponseDto() dto.GetCountryResponse {
+	return dto.GetCountryResponse{
 		ID: c.ID,
 		Name: c.Name,
 		Region: c.Region,

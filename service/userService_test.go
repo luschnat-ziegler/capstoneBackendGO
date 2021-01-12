@@ -262,4 +262,3 @@ func Test_UpdateWeights_should_return_nil_and_AppError_if_repo_method_returns_er
 		t.Error("Returned error does not match")
 	}
 }
-

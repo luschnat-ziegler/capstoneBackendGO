@@ -9,20 +9,20 @@ import (
 
 //go:generate mockgen -destination=../mocks/service/mockCountryService.go -package=service github.com/luschnat-ziegler/cc_backend_go/service CountryService
 type CountryService interface {
-	GetAll() ([]*dto.GetCountryResponse, *errs.AppError)
+	GetAll() ([]dto.GetCountryResponse, *errs.AppError)
 }
 
 type DefaultCountryService struct {
 	repo domain.CountryRepository
 }
 
-func (s DefaultCountryService) GetAll() ([]*dto.GetCountryResponse, *errs.AppError) {
+func (s DefaultCountryService) GetAll() ([]dto.GetCountryResponse, *errs.AppError) {
 	countries, err := s.repo.FindAll()
 	if err != nil {
 		logger.Error("Error returned by CountryRepository.FindAll(): " + err.Message)
 		return nil, errs.NewUnexpectedError("Error in findAll method")
 	}
-	response := make([]*dto.GetCountryResponse, 0)
+	response := make([]dto.GetCountryResponse, 0)
 	for _, c := range countries {
 		response = append(response, c.ToGetCountryResponseDto())
 	}
