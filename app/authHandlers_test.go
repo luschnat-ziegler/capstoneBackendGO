@@ -16,14 +16,28 @@ func stringPtr(s string) *string {
 	return &s
 }
 
+var ah AuthHandlers
+var mockAuthService *service.MockAuthService
+var router *mux.Router
+
+func setupAuthHandlersTest(t *testing.T) func() {
+	ctrl := gomock.NewController(t)
+	mockAuthService = service.NewMockAuthService(ctrl)
+	ah = AuthHandlers{mockAuthService}
+	router = mux.NewRouter()
+	return func() {
+		router = nil
+		defer ctrl.Finish()
+	}
+}
+
 func Test_should_return_status_code_200_and_success_response_with_valid_request(t *testing.T) {
 
 	// Arrange
-	ctrl := gomock.NewController(t)
-	mockService := service.NewMockAuthService(ctrl)
-	ch := AuthHandlers{mockService}
-	router := mux.NewRouter()
-	router.HandleFunc("/login", ch.logInUser)
+	teardown := setupAuthHandlersTest(t)
+	defer teardown()
+
+	router.HandleFunc("/login", ah.logInUser)
 
 	mockRequestDto := dto.LogInRequest{
 		Email:    "test@test.de",
@@ -35,7 +49,7 @@ func Test_should_return_status_code_200_and_success_response_with_valid_request(
 		Token:   stringPtr("test_token"),
 	}
 
-	mockService.EXPECT().LogIn(mockRequestDto).Return(&mockResponseDto, nil)
+	mockAuthService.EXPECT().LogIn(mockRequestDto).Return(&mockResponseDto, nil)
 
 	jsonBody := []byte(`{"email":"test@test.de","password":"test"}`)
 	request, _ := http.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(jsonBody))
@@ -61,11 +75,10 @@ func Test_should_return_status_code_200_and_success_response_with_valid_request(
 func Test_should_return_code_400_and_appropriate_error_with_invalid_json_in_request (t *testing.T) {
 
 	// Arrange
-	ctrl := gomock.NewController(t)
-	mockService := service.NewMockAuthService(ctrl)
-	ch := AuthHandlers{mockService}
-	router := mux.NewRouter()
-	router.HandleFunc("/login", ch.logInUser)
+	teardown := setupAuthHandlersTest(t)
+	defer teardown()
+
+	router.HandleFunc("/login", ah.logInUser)
 
 	jsonBody := []byte(`"email":"test@test.de","password":"test"}`)
 	request, _ := http.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(jsonBody))
@@ -91,11 +104,10 @@ func Test_should_return_code_400_and_appropriate_error_with_invalid_json_in_requ
 func Test_should_return_code_422_and_validation_error_message_with_invalid_request (t *testing.T) {
 
 	// Arrange
-	ctrl := gomock.NewController(t)
-	mockService := service.NewMockAuthService(ctrl)
-	ch := AuthHandlers{mockService}
-	router := mux.NewRouter()
-	router.HandleFunc("/login", ch.logInUser)
+	teardown := setupAuthHandlersTest(t)
+	defer teardown()
+
+	router.HandleFunc("/login", ah.logInUser)
 
 	jsonBody := []byte(`{"email":"test","password":"test"}`)
 	request, _ := http.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(jsonBody))
@@ -120,12 +132,12 @@ func Test_should_return_code_422_and_validation_error_message_with_invalid_reque
 }
 
 func Test_should_return_error_with_code_if_service_returns_error (t *testing.T) {
+
 	// Arrange
-	ctrl := gomock.NewController(t)
-	mockService := service.NewMockAuthService(ctrl)
-	ch := AuthHandlers{mockService}
-	router := mux.NewRouter()
-	router.HandleFunc("/login", ch.logInUser)
+	teardown := setupAuthHandlersTest(t)
+	defer teardown()
+
+	router.HandleFunc("/login", ah.logInUser)
 
 	jsonBody := []byte(`{"email":"test@test.de","password":"test"}`)
 	request, _ := http.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(jsonBody))
@@ -136,7 +148,7 @@ func Test_should_return_error_with_code_if_service_returns_error (t *testing.T) 
 	}
 
 	mockAppError := errs.NewUnexpectedError("unexpected error")
-	mockService.EXPECT().LogIn(mockRequestDto).Return(nil, mockAppError)
+	mockAuthService.EXPECT().LogIn(mockRequestDto).Return(nil, mockAppError)
 
 	// Act
 	recorder := httptest.NewRecorder()

@@ -13,19 +13,26 @@ import (
 	"testing"
 )
 
-func intPtr(i int) *int {
-	return &i
+var ch CountryHandlers
+var mockCountryService *service.MockCountryService
+
+func setupCountryHandlersTest(t *testing.T) func() {
+	ctrl := gomock.NewController(t)
+	mockCountryService = service.NewMockCountryService(ctrl)
+	ch = CountryHandlers{mockCountryService}
+	return func() {
+		defer ctrl.Finish()
+	}
 }
 
 func Test_should_return_countries_with_status_code_200(t *testing.T) {
 
 	// Arrange
-	ctrl := gomock.NewController(t)
-	mockService := service.NewMockCountryService(ctrl)
-	ch := CountryHandlers{mockService}
+	teardown := setupCountryHandlersTest(t)
+	defer teardown()
 	router := mux.NewRouter()
 
-	dummyCountries := []*dto.GetCountryResponse{
+	dummyCountries := []dto.GetCountryResponse{
 		{
 			ID: primitive.NewObjectID(),
 			Name: "Testistan",
@@ -52,7 +59,7 @@ func Test_should_return_countries_with_status_code_200(t *testing.T) {
 		},
 	}
 
-	mockService.EXPECT().GetAll().Return(dummyCountries, nil)
+	mockCountryService.EXPECT().GetAll().Return(dummyCountries, nil)
 
 	router = mux.NewRouter()
 	router.HandleFunc("/countries", ch.getAllCountries)
@@ -83,14 +90,13 @@ func Test_should_return_countries_with_status_code_200(t *testing.T) {
 }
 
 func Test_should_return_statue_code_500_with_error_message (t *testing.T) {
+
 	// Arrange
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-	mockService := service.NewMockCountryService(ctrl)
+	teardown := setupCountryHandlersTest(t)
+	defer teardown()
 
 	mockReturnError := errs.NewUnexpectedError("Unexpected server error")
-	mockService.EXPECT().GetAll().Return(nil, mockReturnError)
-	ch := CountryHandlers{mockService}
+	mockCountryService.EXPECT().GetAll().Return(nil, mockReturnError)
 
 	router := mux.NewRouter()
 	router.HandleFunc("/countries", ch.getAllCountries)
@@ -114,4 +120,8 @@ func Test_should_return_statue_code_500_with_error_message (t *testing.T) {
 	if resultError.Message != mockReturnError.Message {
 		t.Error("Response error message does not match")
 	}
+}
+
+func intPtr(i int) *int {
+	return &i
 }
