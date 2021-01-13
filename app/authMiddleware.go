@@ -1,14 +1,15 @@
 package app
 
 import (
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
 	"github.com/luschnat-ziegler/cc_backend_go/errs"
+	"github.com/luschnat-ziegler/cc_backend_go/service"
 	"net/http"
-	"os"
 )
 
-type AuthMiddleware struct {}
+type AuthMiddleware struct {
+	service service.AuthService
+}
 
 func (am AuthMiddleware) authorizationHandler() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
@@ -20,13 +21,9 @@ func (am AuthMiddleware) authorizationHandler() func(http.Handler) http.Handler 
 			} else if authHeader := r.Header.Get("Authorization"); authHeader == "" {
 				appError := errs.NewUnauthorizedError("Token missing")
 				writeResponse(w, appError.Code, appError.AsMessage())
-			} else if secret, ok := os.LookupEnv("JWT_SECRET"); !ok {
-				appError := errs.NewUnexpectedError("Unexpected server error")
+			} else if tokenUserId, appError := am.service.Verify(authHeader); appError != nil {
 				writeResponse(w, appError.Code, appError.AsMessage())
-			} else if token , err := parseToken(authHeader, secret); err != nil {
-				appError := errs.NewUnauthorizedError("Token invalid")
-				writeResponse(w, appError.Code, appError.AsMessage())
-			} else if token.Claims.(jwt.MapClaims)["sub"].(string) != mux.Vars(r)["id"] {
+			} else if *tokenUserId != mux.Vars(r)["id"] {
 				appError := errs.NewUnauthorizedError("Token not matching requested user")
 				writeResponse(w, appError.Code, appError.AsMessage())
 			} else {
@@ -34,14 +31,4 @@ func (am AuthMiddleware) authorizationHandler() func(http.Handler) http.Handler 
 			}
 		})
 	}
-
-}
-
-func parseToken(authHeader, secret string) (*jwt.Token, error) {
-	token, err := jwt.Parse(GetTokenFromHeader(authHeader),
-		func(token *jwt.Token) (interface{}, error) {return []byte(secret), nil})
-	if err != nil {
-		return nil, err
-	}
-	return token, nil
 }

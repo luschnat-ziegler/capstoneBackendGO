@@ -15,7 +15,7 @@ import (
 //go:generate mockgen -destination=../mocks/service/mockAuthService.go -package=service github.com/luschnat-ziegler/cc_backend_go/service AuthService
 type AuthService interface {
 	LogIn(request dto.LogInRequest) (*dto.LogInResponse, *errs.AppError)
-	Verify(authHeader, idFromRequest string) (*string, *errs.AppError)
+	Verify(authHeader string) (*string, *errs.AppError)
 }
 
 type DefaultAuthService struct {
@@ -33,7 +33,8 @@ func (s DefaultAuthService) Verify(authHeader string) (*string, *errs.AppError) 
 		return nil, errs.NewUnexpectedError("unexpected server error")
 	}
 
-	token, err := jwt.Parse(splitToken[1], func(token *jwt.Token) (interface{}, error) {return []byte(secret), nil})
+	tokenString := strings.TrimSpace(splitToken[1])
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {return []byte(secret), nil})
 	if err != nil {
 		return nil, errs.NewUnauthorizedError("Invalid token")
 	}

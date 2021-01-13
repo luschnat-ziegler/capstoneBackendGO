@@ -46,7 +46,7 @@ func Start() {
 		Methods(http.MethodPost).
 		Name("LogInUser")
 
-	am := AuthMiddleware{}
+	am := AuthMiddleware{service.NewAuthService(userRepositoryDB)}
 	router.Use(am.authorizationHandler())
 
 	handler := cors.Default().Handler(router)
