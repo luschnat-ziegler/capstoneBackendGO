@@ -30,7 +30,7 @@ func writeResponse(w http.ResponseWriter, code int, data interface{}) {
 	}
 }
 
-func getTokenFromHeader(header string) string {
+func GetTokenFromHeader(header string) string {
 	splitToken := strings.Split(header, "Bearer")
 	if len(splitToken) == 2 {
 		return strings.TrimSpace(splitToken[1])

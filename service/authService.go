@@ -8,16 +8,38 @@ import (
 	"github.com/luschnat-ziegler/cc_backend_go/logger"
 	"golang.org/x/crypto/bcrypt"
 	"os"
+	"strings"
 	"time"
 )
 
 //go:generate mockgen -destination=../mocks/service/mockAuthService.go -package=service github.com/luschnat-ziegler/cc_backend_go/service AuthService
 type AuthService interface {
 	LogIn(request dto.LogInRequest) (*dto.LogInResponse, *errs.AppError)
+	Verify(authHeader, idFromRequest string) (*string, *errs.AppError)
 }
 
 type DefaultAuthService struct {
 	repo domain.UserRepository
+}
+
+func (s DefaultAuthService) Verify(authHeader string) (*string, *errs.AppError) {
+	splitToken := strings.Split(authHeader, "Bearer")
+	if len(splitToken) != 2 {
+		return nil, errs.NewUnauthorizedError("Invalid auth header")
+	}
+
+	secret, ok := os.LookupEnv("JWT_SECRET")
+	if !ok {
+		return nil, errs.NewUnexpectedError("unexpected server error")
+	}
+
+	token, err := jwt.Parse(splitToken[1], func(token *jwt.Token) (interface{}, error) {return []byte(secret), nil})
+	if err != nil {
+		return nil, errs.NewUnauthorizedError("Invalid token")
+	}
+
+	idFromToken := token.Claims.(jwt.MapClaims)["sub"].(string)
+	return &idFromToken, nil
 }
 
 func (s DefaultAuthService) LogIn (request dto.LogInRequest) (*dto.LogInResponse, *errs.AppError) {

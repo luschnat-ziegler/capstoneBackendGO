@@ -38,7 +38,7 @@ func (am AuthMiddleware) authorizationHandler() func(http.Handler) http.Handler 
 }
 
 func parseToken(authHeader, secret string) (*jwt.Token, error) {
-	token, err := jwt.Parse(getTokenFromHeader(authHeader),
+	token, err := jwt.Parse(GetTokenFromHeader(authHeader),
 		func(token *jwt.Token) (interface{}, error) {return []byte(secret), nil})
 	if err != nil {
 		return nil, err
