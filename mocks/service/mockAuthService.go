@@ -48,3 +48,18 @@ func (mr *MockAuthServiceMockRecorder) LogIn(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LogIn", reflect.TypeOf((*MockAuthService)(nil).LogIn), arg0)
 }
+
+// Verify mocks base method
+func (m *MockAuthService) Verify(arg0 string) (*string, *errs.AppError) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Verify", arg0)
+	ret0, _ := ret[0].(*string)
+	ret1, _ := ret[1].(*errs.AppError)
+	return ret0, ret1
+}
+
+// Verify indicates an expected call of Verify
+func (mr *MockAuthServiceMockRecorder) Verify(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Verify", reflect.TypeOf((*MockAuthService)(nil).Verify), arg0)
+}

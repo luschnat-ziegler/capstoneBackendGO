@@ -10,12 +10,24 @@ import (
 	"testing"
 )
 
+var mockCountryRepository *domain.MockCountryRepository
+var countryService CountryService
+
+func setupCountryServiceTest (t *testing.T) func() {
+	ctrl := gomock.NewController(t)
+	mockCountryRepository = domain.NewMockCountryRepository(ctrl)
+	countryService = NewCountryService(mockCountryRepository)
+	return func() {
+		countryService = nil
+		defer ctrl.Finish()
+	}
+}
+
 func Test_GetAll_should_return_slice_of_pointers_to_GetCountryResponse_and_nil_if_repo_method_returns_no_error (t *testing.T) {
 
 	// Arrange
-	ctrl := gomock.NewController(t)
-	mockRepository := domain.NewMockCountryRepository(ctrl)
-	service := NewCountryService(mockRepository)
+	teardown := setupCountryServiceTest(t)
+	defer teardown()
 
 	mockCountry := domain2.Country{
 		ID:          primitive.ObjectID{},
@@ -33,10 +45,10 @@ func Test_GetAll_should_return_slice_of_pointers_to_GetCountryResponse_and_nil_i
 	mockSlice := make([]domain2.Country, 0)
 	mockSlice = append(mockSlice, mockCountry)
 
-	mockRepository.EXPECT().FindAll().Return(mockSlice, nil)
+	mockCountryRepository.EXPECT().FindAll().Return(mockSlice, nil)
 
 	// Act
-	result, err := service.GetAll()
+	result, err := countryService.GetAll()
 
 	// Assert
 	if err != nil {
@@ -56,16 +68,15 @@ func Test_GetAll_should_return_slice_of_pointers_to_GetCountryResponse_and_nil_i
 func Test_GetAll_should_return_nil_and_AppError_if_repo_method_returns_error (t *testing.T) {
 
 	// Arrange
-	ctrl := gomock.NewController(t)
-	mockRepository := domain.NewMockCountryRepository(ctrl)
-	service := NewCountryService(mockRepository)
+	teardown := setupCountryServiceTest(t)
+	defer teardown()
 
 	mockAppError := errs.NewUnexpectedError("unexpected server error")
 
-	mockRepository.EXPECT().FindAll().Return(nil, mockAppError)
+	mockCountryRepository.EXPECT().FindAll().Return(nil, mockAppError)
 
 	// Act
-	result, err := service.GetAll()
+	result, err := countryService.GetAll()
 
 	// Assert
 	if result != nil {

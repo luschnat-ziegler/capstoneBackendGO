@@ -11,11 +11,22 @@ import (
 	"testing"
 )
 
+var authService AuthService
+
+func setupAuthServiceTest(t *testing.T) func() {
+	ctrl := gomock.NewController(t)
+	mockUserRepository = domain.NewMockUserRepository(ctrl)
+	authService = NewAuthService(mockUserRepository)
+	return func() {
+		userService = nil
+		defer ctrl.Finish()
+	}
+}
+
 func Test_Login_should_return_LogInResponse_and_nil_if_repo_method_returns_correctly (t *testing.T) {
 
-	ctrl := gomock.NewController(t)
-	mockRepository := domain.NewMockUserRepository(ctrl)
-	service := NewAuthService(mockRepository)
+	teardown := setupAuthServiceTest(t)
+	defer teardown()
 
 	mockUser := domain2.User{
 		ID:                primitive.ObjectID{},
@@ -36,10 +47,10 @@ func Test_Login_should_return_LogInResponse_and_nil_if_repo_method_returns_corre
 		Password: "password",
 	}
 
-	mockRepository.EXPECT().ByEmail("test@test.de").Return(&mockUser, nil)
+	mockUserRepository.EXPECT().ByEmail("test@test.de").Return(&mockUser, nil)
 
 	// Act
-	result, err := service.LogIn(mockLogInRequest)
+	result, err := authService.LogIn(mockLogInRequest)
 
 	// Assert
 	if err != nil {
@@ -57,9 +68,11 @@ func Test_Login_should_return_LogInResponse_and_nil_if_repo_method_returns_corre
 }
 
 func Test_Login_should_return_nil_and_NotFoundError_if_password_does_not_match_hash (t *testing.T) {
-	ctrl := gomock.NewController(t)
-	mockRepository := domain.NewMockUserRepository(ctrl)
-	service := NewAuthService(mockRepository)
+
+	// Arrange
+
+	teardown := setupAuthServiceTest(t)
+	defer teardown()
 
 	mockUser := domain2.User{
 		ID:                primitive.ObjectID{},
@@ -80,10 +93,10 @@ func Test_Login_should_return_nil_and_NotFoundError_if_password_does_not_match_h
 		Password: "invalid_password",
 	}
 
-	mockRepository.EXPECT().ByEmail("test@test.de").Return(&mockUser, nil)
+	mockUserRepository.EXPECT().ByEmail("test@test.de").Return(&mockUser, nil)
 
 	// Act
-	result, err := service.LogIn(mockLogInRequest)
+	result, err := authService.LogIn(mockLogInRequest)
 
 	// Assert
 	if result != nil {
@@ -106,9 +119,10 @@ func Test_Login_should_return_nil_and_NotFoundError_if_password_does_not_match_h
 }
 
 func Test_Login_should_return_nil_and_AppError_if_repo_method_returns_error (t *testing.T) {
-	ctrl := gomock.NewController(t)
-	mockRepository := domain.NewMockUserRepository(ctrl)
-	service := NewAuthService(mockRepository)
+
+	// Arrange
+	teardown := setupAuthServiceTest(t)
+	defer teardown()
 
 	mockLogInRequest := dto.LogInRequest{
 		Email:    "test@test.de",
@@ -116,10 +130,10 @@ func Test_Login_should_return_nil_and_AppError_if_repo_method_returns_error (t *
 	}
 
 	mockError := errors.New("test")
-	mockRepository.EXPECT().ByEmail("test@test.de").Return(nil, &mockError)
+	mockUserRepository.EXPECT().ByEmail("test@test.de").Return(nil, &mockError)
 
 	// Act
-	result, err := service.LogIn(mockLogInRequest)
+	result, err := authService.LogIn(mockLogInRequest)
 
 	// Assert
 	if result != nil {

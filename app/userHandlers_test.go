@@ -12,6 +12,20 @@ import (
 	"testing"
 )
 
+var uh UserHandlers
+var mockUserService *service.MockUserService
+
+func setupUserHandlersTest(t *testing.T) func() {
+	ctrl := gomock.NewController(t)
+	mockUserService = service.NewMockUserService(ctrl)
+	uh = UserHandlers{mockUserService}
+	router = mux.NewRouter()
+	return func() {
+		router = nil
+		defer ctrl.Finish()
+	}
+}
+
 // ##############
 // Get user by id
 // ##############
@@ -19,10 +33,9 @@ import (
 func Test_getUserById_should_return_code_200_and_corresponding_response_with_valid_request (t *testing.T) {
 
 	// Arrange
-	ctrl := gomock.NewController(t)
-	mockService := service.NewMockUserService(ctrl)
-	uh := UserHandlers{mockService}
-	router := mux.NewRouter()
+	teardown := setupUserHandlersTest(t)
+	defer teardown()
+
 	router.HandleFunc("/user/{id}", uh.GetUserById)
 
 	mockResponseDto := dto.GetUserResponse{
@@ -37,7 +50,7 @@ func Test_getUserById_should_return_code_200_and_corresponding_response_with_val
 		WeightFreedom:     2,
 	}
 
-	mockService.EXPECT().GetUser("5feb5e9b3cf54dae7d98873e").Return(&mockResponseDto, nil)
+	mockUserService.EXPECT().GetUser("5feb5e9b3cf54dae7d98873e").Return(&mockResponseDto, nil)
 	request, _ := http.NewRequest(http.MethodGet, "/user/5feb5e9b3cf54dae7d98873e", nil)
 
 	// Act
@@ -59,14 +72,14 @@ func Test_getUserById_should_return_code_200_and_corresponding_response_with_val
 }
 
 func Test_getUserById_should_return_error_code_and_error_message_response_when_service_method_returns_error (t *testing.T) {
+
 	// Arrange
-	ctrl := gomock.NewController(t)
-	mockService := service.NewMockUserService(ctrl)
-	uh := UserHandlers{mockService}
-	router := mux.NewRouter()
+	teardown := setupUserHandlersTest(t)
+	defer teardown()
+
 	router.HandleFunc("/user/{id}", uh.GetUserById)
 
-	mockService.EXPECT().GetUser("invalid_id").Return(nil, errs.NewUnexpectedError("unexpected server error"))
+	mockUserService.EXPECT().GetUser("invalid_id").Return(nil, errs.NewUnexpectedError("unexpected server error"))
 	request, _ := http.NewRequest(http.MethodGet, "/user/invalid_id", nil)
 
 	// Act
@@ -94,10 +107,9 @@ func Test_getUserById_should_return_error_code_and_error_message_response_when_s
 func Test_createUser_should_return_code_201_and_corresponding_response_with_valid_request (t *testing.T) {
 
 	// Arrange
-	ctrl := gomock.NewController(t)
-	mockService := service.NewMockUserService(ctrl)
-	uh := UserHandlers{mockService}
-	router := mux.NewRouter()
+	teardown := setupUserHandlersTest(t)
+	defer teardown()
+
 	router.HandleFunc("/user", uh.CreateUser).Methods(http.MethodPost)
 
 	mockRequestDto := dto.CreateUserRequest{
@@ -110,7 +122,7 @@ func Test_createUser_should_return_code_201_and_corresponding_response_with_vali
 	mockResponseDto := dto.CreateUserResponse{Id: "returned_id"}
 
 	jsonBody := []byte(`{"email":"test@test.de","password":"password","first_name":"Testy","last_name":"McTestface"}`)
-	mockService.EXPECT().CreateUser(mockRequestDto).Return(&mockResponseDto, nil)
+	mockUserService.EXPECT().CreateUser(mockRequestDto).Return(&mockResponseDto, nil)
 	request, _ := http.NewRequest(http.MethodPost, "/user", bytes.NewBuffer(jsonBody))
 
 	// Act
@@ -134,10 +146,8 @@ func Test_createUser_should_return_code_201_and_corresponding_response_with_vali
 func Test_createUser_should_return_code_400_and_error_message_with_invalid_json_body (t *testing.T) {
 
 	// Arrange
-	ctrl := gomock.NewController(t)
-	mockService := service.NewMockUserService(ctrl)
-	uh := UserHandlers{mockService}
-	router := mux.NewRouter()
+	teardown := setupUserHandlersTest(t)
+	defer teardown()
 	router.HandleFunc("/user", uh.CreateUser).Methods(http.MethodPost)
 
 	jsonBody := []byte(`"email":"test@test.de","password":"password","first_name":"Testy","last_name":"McTestface"}`)
@@ -164,10 +174,8 @@ func Test_createUser_should_return_code_400_and_error_message_with_invalid_json_
 func Test_createUser_should_return_code_422_and_validation_message_with_invalid_request (t *testing.T) {
 
 	// Arrange
-	ctrl := gomock.NewController(t)
-	mockService := service.NewMockUserService(ctrl)
-	uh := UserHandlers{mockService}
-	router := mux.NewRouter()
+	teardown := setupUserHandlersTest(t)
+	defer teardown()
 	router.HandleFunc("/user", uh.CreateUser).Methods(http.MethodPost)
 
 	jsonBody := []byte(`{"email":"test@test.de","password":"pass","first_name":"Testy","last_name":"McTestface"}`)
@@ -194,10 +202,8 @@ func Test_createUser_should_return_code_422_and_validation_message_with_invalid_
 func Test_createUser_should_return_error_with_code_if_service_returns_error (t *testing.T) {
 
 	// Arrange
-	ctrl := gomock.NewController(t)
-	mockService := service.NewMockUserService(ctrl)
-	uh := UserHandlers{mockService}
-	router := mux.NewRouter()
+	teardown := setupUserHandlersTest(t)
+	defer teardown()
 	router.HandleFunc("/user", uh.CreateUser).Methods(http.MethodPost)
 
 	mockRequestDto := dto.CreateUserRequest{
@@ -208,7 +214,7 @@ func Test_createUser_should_return_error_with_code_if_service_returns_error (t *
 	}
 
 	jsonBody := []byte(`{"email":"test@test.de","password":"password","first_name":"Testy","last_name":"McTestface"}`)
-	mockService.EXPECT().CreateUser(mockRequestDto).Return(nil, errs.NewUnexpectedError("unexpected server error"))
+	mockUserService.EXPECT().CreateUser(mockRequestDto).Return(nil, errs.NewUnexpectedError("unexpected server error"))
 	request, _ := http.NewRequest(http.MethodPost, "/user", bytes.NewBuffer(jsonBody))
 
 	// Act
@@ -236,10 +242,8 @@ func Test_createUser_should_return_error_with_code_if_service_returns_error (t *
 func Test_updateUserWeights_should_return_code_200_and_corresponding_response_with_valid_request (t *testing.T) {
 
 	// Arrange
-	ctrl := gomock.NewController(t)
-	mockService := service.NewMockUserService(ctrl)
-	uh := UserHandlers{mockService}
-	router := mux.NewRouter()
+	teardown := setupUserHandlersTest(t)
+	defer teardown()
 	router.HandleFunc("/user/{id}", uh.UpdateUserWeights).Methods(http.MethodPatch)
 
 	mockRequestDto := dto.SetUserWeightsRequest{
@@ -258,7 +262,7 @@ func Test_updateUserWeights_should_return_code_200_and_corresponding_response_wi
 	}
 
 	jsonBody := []byte(`{"weight_environment":1,"weight_gender":2,"weight_lgbtq":3,"weight_corruption":2,"weight_freedom":4,"weight_equality":0}`)
-	mockService.EXPECT().UpdateWeights(mockRequestDto).Return(&mockResponseDto, nil)
+	mockUserService.EXPECT().UpdateWeights(mockRequestDto).Return(&mockResponseDto, nil)
 	request, _ := http.NewRequest(http.MethodPatch, "/user/valid_test_id", bytes.NewBuffer(jsonBody))
 
 	// Act
@@ -281,10 +285,8 @@ func Test_updateUserWeights_should_return_code_200_and_corresponding_response_wi
 
 func Test_updateUserWeights_should_return_code_400_and_error_message_with_invalid_json_body (t *testing.T) {
 	// Arrange
-	ctrl := gomock.NewController(t)
-	mockService := service.NewMockUserService(ctrl)
-	uh := UserHandlers{mockService}
-	router := mux.NewRouter()
+	teardown := setupUserHandlersTest(t)
+	defer teardown()
 	router.HandleFunc("/user/{id}", uh.UpdateUserWeights).Methods(http.MethodPatch)
 
 	invalidJsonBody := []byte(`"weight_environment":1,"weight_gender":2,"weight_lgbtq":3,"weight_corruption":2,"weight_freedom":4,"weight_equality":0}`)
@@ -310,10 +312,8 @@ func Test_updateUserWeights_should_return_code_400_and_error_message_with_invali
 
 func Test_updateUserWeights_should_return_code_422_and_validation_message_with_invalid_request (t *testing.T) {
 	// Arrange
-	ctrl := gomock.NewController(t)
-	mockService := service.NewMockUserService(ctrl)
-	uh := UserHandlers{mockService}
-	router := mux.NewRouter()
+	teardown := setupUserHandlersTest(t)
+	defer teardown()
 	router.HandleFunc("/user/{id}", uh.UpdateUserWeights).Methods(http.MethodPatch)
 
 	jsonBody := []byte(`{"weight_environment":10,"weight_gender":2,"weight_lgbtq":3,"weight_corruption":2,"weight_freedom":4,"weight_equality":0}`)
@@ -340,10 +340,8 @@ func Test_updateUserWeights_should_return_code_422_and_validation_message_with_i
 func Test_updateUserWeights_should_return_error_with_code_if_service_returns_error (t *testing.T) {
 
 	// Arrange
-	ctrl := gomock.NewController(t)
-	mockService := service.NewMockUserService(ctrl)
-	uh := UserHandlers{mockService}
-	router := mux.NewRouter()
+	teardown := setupUserHandlersTest(t)
+	defer teardown()
 	router.HandleFunc("/user/{id}", uh.UpdateUserWeights).Methods(http.MethodPatch)
 
 	mockRequestDto := dto.SetUserWeightsRequest{
@@ -357,7 +355,7 @@ func Test_updateUserWeights_should_return_error_with_code_if_service_returns_err
 	}
 
 	jsonBody := []byte(`{"weight_environment":1,"weight_gender":2,"weight_lgbtq":3,"weight_corruption":2,"weight_freedom":4,"weight_equality":0}`)
-	mockService.EXPECT().UpdateWeights(mockRequestDto).Return(nil, errs.NewUnexpectedError("unexpected server error"))
+	mockUserService.EXPECT().UpdateWeights(mockRequestDto).Return(nil, errs.NewUnexpectedError("unexpected server error"))
 	request, _ := http.NewRequest(http.MethodPatch, "/user/valid_test_id", bytes.NewBuffer(jsonBody))
 
 	// Act
