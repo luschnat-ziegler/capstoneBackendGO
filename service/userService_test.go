@@ -11,8 +11,17 @@ import (
 	"testing"
 )
 
-func intPtr(i int) *int {
-	return &i
+var mockUserRepository *domain.MockUserRepository
+var userService UserService
+
+func setupUserServiceTest(t *testing.T) func() {
+	ctrl := gomock.NewController(t)
+	mockUserRepository = domain.NewMockUserRepository(ctrl)
+	userService = NewUserService(mockUserRepository)
+	return func() {
+		userService = nil
+		defer ctrl.Finish()
+	}
 }
 
 // ##########
@@ -20,12 +29,11 @@ func intPtr(i int) *int {
 // ##########
 
 func Test_CreateUser_returns_CreateUserResponse_and_nil_when_Repo_method_returns_no_error (t *testing.T) {
-	
+
 	// Arrange
-	ctrl := gomock.NewController(t)
-	mockRepository := domain.NewMockUserRepository(ctrl)
-	service := NewUserService(mockRepository)
-	
+	teardown := setupUserServiceTest(t)
+	defer teardown()
+
 	mockCreateUserRequest := dto.CreateUserRequest{
 		Email:     "test@test.de",
 		Password:  "password",
@@ -36,10 +44,10 @@ func Test_CreateUser_returns_CreateUserResponse_and_nil_when_Repo_method_returns
 	var user = domain2.NewUser(mockCreateUserRequest)
 
 	id := "test_id"
-	mockRepository.EXPECT().Save(user).Return(&id, nil)
+	mockUserRepository.EXPECT().Save(user).Return(&id, nil)
 
 	//Act
-	result, err := service.CreateUser(mockCreateUserRequest)
+	result, err := userService.CreateUser(mockCreateUserRequest)
 
 	// Assert
 	if err != nil {
@@ -59,9 +67,8 @@ func Test_CreateUser_returns_CreateUserResponse_and_nil_when_Repo_method_returns
 func Test_CreateUser_returns_nil_and_AppError_if_repo_method_returns_error (t *testing.T) {
 
 	// Arrange
-	ctrl := gomock.NewController(t)
-	mockRepository := domain.NewMockUserRepository(ctrl)
-	service := NewUserService(mockRepository)
+	teardown := setupUserServiceTest(t)
+	defer teardown()
 
 	mockCreateUserRequest := dto.CreateUserRequest{
 		Email:     "test@test.de",
@@ -73,10 +80,10 @@ func Test_CreateUser_returns_nil_and_AppError_if_repo_method_returns_error (t *t
 	var user = domain2.NewUser(mockCreateUserRequest)
 
 	mockAppError := errs.NewUnexpectedError("unexpected server error")
-	mockRepository.EXPECT().Save(user).Return(nil, mockAppError)
+	mockUserRepository.EXPECT().Save(user).Return(nil, mockAppError)
 
 	// Act
-	result, err := service.CreateUser(mockCreateUserRequest)
+	result, err := userService.CreateUser(mockCreateUserRequest)
 
 	// Assert
 	if err == nil {
@@ -104,9 +111,9 @@ func Test_CreateUser_returns_nil_and_AppError_if_repo_method_returns_error (t *t
 func Test_GetUser_should_return_GetUserRequest_and_nil_called_with_valid_id (t *testing.T) {
 
 	// Arrange
-	ctrl := gomock.NewController(t)
-	mockRepository := domain.NewMockUserRepository(ctrl)
-	service := NewUserService(mockRepository)
+
+	teardown := setupUserServiceTest(t)
+	defer teardown()
 
 	user := domain2.User{
 		ID:                primitive.ObjectID{},
@@ -122,10 +129,10 @@ func Test_GetUser_should_return_GetUserRequest_and_nil_called_with_valid_id (t *
 		WeightFreedom:     0,
 	}
 
-	mockRepository.EXPECT().ById("test_id").Return(&user, nil)
+	mockUserRepository.EXPECT().ById("test_id").Return(&user, nil)
 
 	// Act
-	result, err := service.GetUser("test_id")
+	result, err := userService.GetUser("test_id")
 
 	// Assert
 	if err != nil {
@@ -147,22 +154,21 @@ func Test_GetUser_should_return_GetUserRequest_and_nil_called_with_valid_id (t *
 func Test_GetUser_should_return_nil_and_AppError_if_repo_method_returns_error (t *testing.T) {
 
 	// Arrange
-	ctrl := gomock.NewController(t)
-	mockRepository := domain.NewMockUserRepository(ctrl)
-	service := NewUserService(mockRepository)
-	
+	teardown := setupUserServiceTest(t)
+	defer teardown()
+
 	mockAppError := errs.NewUnexpectedError("unexpected server error")
 
-	mockRepository.EXPECT().ById("test_id").Return(nil, mockAppError)
+	mockUserRepository.EXPECT().ById("test_id").Return(nil, mockAppError)
 
 	// Act
-	result, err := service.GetUser("test_id")
-	
+	result, err := userService.GetUser("test_id")
+
 	// Assert
 	if result != nil {
 		t.Error("Result not nil, nil expected")
 	}
-	
+
 	if err == nil {
 		t.Error("Error nil, *AppError expected")
 	}
@@ -182,9 +188,8 @@ func Test_GetUser_should_return_nil_and_AppError_if_repo_method_returns_error (t
 func Test_UpdateWeights_should_return_SetUserWeightsResponse_and_nil_called_with_SetUserWeightsRequest (t *testing.T) {
 
 	// Arrange
-	ctrl := gomock.NewController(t)
-	mockRepository := domain.NewMockUserRepository(ctrl)
-	service := NewUserService(mockRepository)
+	teardown := setupUserServiceTest(t)
+	defer teardown()
 
 	mockSetUserWeightsRequest := dto.SetUserWeightsRequest{
 		Id:                "test_id",
@@ -201,10 +206,10 @@ func Test_UpdateWeights_should_return_SetUserWeightsResponse_and_nil_called_with
 		Updated: true,
 	}
 
-	mockRepository.EXPECT().UpdateWeights(mockSetUserWeightsRequest).Return(&mockSetUserWeightsResponse, nil)
+	mockUserRepository.EXPECT().UpdateWeights(mockSetUserWeightsRequest).Return(&mockSetUserWeightsResponse, nil)
 
 	// Act
-	result, err := service.UpdateWeights(mockSetUserWeightsRequest)
+	result, err := userService.UpdateWeights(mockSetUserWeightsRequest)
 
 	// Assert
 	if err != nil {
@@ -226,9 +231,8 @@ func Test_UpdateWeights_should_return_SetUserWeightsResponse_and_nil_called_with
 func Test_UpdateWeights_should_return_nil_and_AppError_if_repo_method_returns_error (t *testing.T) {
 
 	// Arrange
-	ctrl := gomock.NewController(t)
-	mockRepository := domain.NewMockUserRepository(ctrl)
-	service := NewUserService(mockRepository)
+	teardown := setupUserServiceTest(t)
+	defer teardown()
 
 	mockSetUserWeightsRequest := dto.SetUserWeightsRequest{
 		Id:                "test_id",
@@ -242,10 +246,10 @@ func Test_UpdateWeights_should_return_nil_and_AppError_if_repo_method_returns_er
 
 	mockAppError := errs.NewUnexpectedError("unexpected server error")
 
-	mockRepository.EXPECT().UpdateWeights(mockSetUserWeightsRequest).Return(nil, mockAppError)
+	mockUserRepository.EXPECT().UpdateWeights(mockSetUserWeightsRequest).Return(nil, mockAppError)
 
 	// Act
-	result, err := service.UpdateWeights(mockSetUserWeightsRequest)
+	result, err := userService.UpdateWeights(mockSetUserWeightsRequest)
 
 	// Assert
 	if result != nil {
@@ -261,4 +265,8 @@ func Test_UpdateWeights_should_return_nil_and_AppError_if_repo_method_returns_er
 	if result != nil && errorString != expected {
 		t.Error("Returned error does not match")
 	}
+}
+
+func intPtr(i int) *int {
+	return &i
 }
