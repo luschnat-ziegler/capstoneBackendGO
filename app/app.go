@@ -47,8 +47,7 @@ func Start() {
 		Name("LogInUser")
 
 	am := AuthMiddleware{service.NewAuthService(userRepositoryDB)}
-	middleWareHandleFunc := am.authorizationHandler()
-	router.Use(middleWareHandleFunc)
+	router.Use(am.authorizationHandler())
 
 	handler := cors.Default().Handler(router)
 	log.Fatal(http.ListenAndServe(":8000", handler))
