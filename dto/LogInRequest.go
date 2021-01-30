@@ -6,8 +6,8 @@ import (
 )
 
 type LogInRequest struct {
-	Email string		`json:"email" validate:"required,email"`
-	Password string		`json:"password" validate:"required"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required"`
 }
 
 func (logInRequest LogInRequest) Validate() *errs.ValidationError {

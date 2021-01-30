@@ -20,7 +20,7 @@ func Info(message string, fields ...zap.Field) {
 func Debug(message string, fields ...zap.Field) {
 	log.Info(message, fields...)
 }
- */
+*/
 
 func Error(message string, fields ...zap.Field) {
 	log.Info(message, fields...)

@@ -23,7 +23,7 @@ func setupAuthServiceTest(t *testing.T) func() {
 	}
 }
 
-func Test_Login_should_return_LogInResponse_and_nil_if_repo_method_returns_correctly (t *testing.T) {
+func Test_Login_should_return_LogInResponse_and_nil_if_repo_method_returns_correctly(t *testing.T) {
 
 	teardown := setupAuthServiceTest(t)
 	defer teardown()
@@ -67,7 +67,7 @@ func Test_Login_should_return_LogInResponse_and_nil_if_repo_method_returns_corre
 	}
 }
 
-func Test_Login_should_return_nil_and_NotFoundError_if_password_does_not_match_hash (t *testing.T) {
+func Test_Login_should_return_nil_and_NotFoundError_if_password_does_not_match_hash(t *testing.T) {
 
 	// Arrange
 
@@ -118,7 +118,7 @@ func Test_Login_should_return_nil_and_NotFoundError_if_password_does_not_match_h
 	}
 }
 
-func Test_Login_should_return_nil_and_AppError_if_repo_method_returns_error (t *testing.T) {
+func Test_Login_should_return_nil_and_AppError_if_repo_method_returns_error(t *testing.T) {
 
 	// Arrange
 	teardown := setupAuthServiceTest(t)

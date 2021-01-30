@@ -30,7 +30,7 @@ func setupUserHandlersTest(t *testing.T) func() {
 // Get user by id
 // ##############
 
-func Test_getUserById_should_return_code_200_and_corresponding_response_with_valid_request (t *testing.T) {
+func Test_getUserById_should_return_code_200_and_corresponding_response_with_valid_request(t *testing.T) {
 
 	// Arrange
 	teardown := setupUserHandlersTest(t)
@@ -71,7 +71,7 @@ func Test_getUserById_should_return_code_200_and_corresponding_response_with_val
 	}
 }
 
-func Test_getUserById_should_return_error_code_and_error_message_response_when_service_method_returns_error (t *testing.T) {
+func Test_getUserById_should_return_error_code_and_error_message_response_when_service_method_returns_error(t *testing.T) {
 
 	// Arrange
 	teardown := setupUserHandlersTest(t)
@@ -104,7 +104,7 @@ func Test_getUserById_should_return_error_code_and_error_message_response_when_s
 // Create User
 // ###########
 
-func Test_createUser_should_return_code_201_and_corresponding_response_with_valid_request (t *testing.T) {
+func Test_createUser_should_return_code_201_and_corresponding_response_with_valid_request(t *testing.T) {
 
 	// Arrange
 	teardown := setupUserHandlersTest(t)
@@ -143,7 +143,7 @@ func Test_createUser_should_return_code_201_and_corresponding_response_with_vali
 	}
 }
 
-func Test_createUser_should_return_code_400_and_error_message_with_invalid_json_body (t *testing.T) {
+func Test_createUser_should_return_code_400_and_error_message_with_invalid_json_body(t *testing.T) {
 
 	// Arrange
 	teardown := setupUserHandlersTest(t)
@@ -171,7 +171,7 @@ func Test_createUser_should_return_code_400_and_error_message_with_invalid_json_
 	}
 }
 
-func Test_createUser_should_return_code_422_and_validation_message_with_invalid_request (t *testing.T) {
+func Test_createUser_should_return_code_422_and_validation_message_with_invalid_request(t *testing.T) {
 
 	// Arrange
 	teardown := setupUserHandlersTest(t)
@@ -199,7 +199,7 @@ func Test_createUser_should_return_code_422_and_validation_message_with_invalid_
 	}
 }
 
-func Test_createUser_should_return_error_with_code_if_service_returns_error (t *testing.T) {
+func Test_createUser_should_return_error_with_code_if_service_returns_error(t *testing.T) {
 
 	// Arrange
 	teardown := setupUserHandlersTest(t)
@@ -239,7 +239,7 @@ func Test_createUser_should_return_error_with_code_if_service_returns_error (t *
 // updateUserWeights
 // #################
 
-func Test_updateUserWeights_should_return_code_200_and_corresponding_response_with_valid_request (t *testing.T) {
+func Test_updateUserWeights_should_return_code_200_and_corresponding_response_with_valid_request(t *testing.T) {
 
 	// Arrange
 	teardown := setupUserHandlersTest(t)
@@ -283,7 +283,7 @@ func Test_updateUserWeights_should_return_code_200_and_corresponding_response_wi
 	}
 }
 
-func Test_updateUserWeights_should_return_code_400_and_error_message_with_invalid_json_body (t *testing.T) {
+func Test_updateUserWeights_should_return_code_400_and_error_message_with_invalid_json_body(t *testing.T) {
 	// Arrange
 	teardown := setupUserHandlersTest(t)
 	defer teardown()
@@ -310,7 +310,7 @@ func Test_updateUserWeights_should_return_code_400_and_error_message_with_invali
 	}
 }
 
-func Test_updateUserWeights_should_return_code_422_and_validation_message_with_invalid_request (t *testing.T) {
+func Test_updateUserWeights_should_return_code_422_and_validation_message_with_invalid_request(t *testing.T) {
 	// Arrange
 	teardown := setupUserHandlersTest(t)
 	defer teardown()
@@ -337,7 +337,7 @@ func Test_updateUserWeights_should_return_code_422_and_validation_message_with_i
 	}
 }
 
-func Test_updateUserWeights_should_return_error_with_code_if_service_returns_error (t *testing.T) {
+func Test_updateUserWeights_should_return_error_with_code_if_service_returns_error(t *testing.T) {
 
 	// Arrange
 	teardown := setupUserHandlersTest(t)

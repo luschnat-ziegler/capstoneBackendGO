@@ -72,7 +72,7 @@ func Test_should_return_status_code_200_and_success_response_with_valid_request(
 	}
 }
 
-func Test_should_return_code_400_and_appropriate_error_with_invalid_json_in_request (t *testing.T) {
+func Test_should_return_code_400_and_appropriate_error_with_invalid_json_in_request(t *testing.T) {
 
 	// Arrange
 	teardown := setupAuthHandlersTest(t)
@@ -101,7 +101,7 @@ func Test_should_return_code_400_and_appropriate_error_with_invalid_json_in_requ
 	}
 }
 
-func Test_should_return_code_422_and_validation_error_message_with_invalid_request (t *testing.T) {
+func Test_should_return_code_422_and_validation_error_message_with_invalid_request(t *testing.T) {
 
 	// Arrange
 	teardown := setupAuthHandlersTest(t)
@@ -131,7 +131,7 @@ func Test_should_return_code_422_and_validation_error_message_with_invalid_reque
 	}
 }
 
-func Test_should_return_error_with_code_if_service_returns_error (t *testing.T) {
+func Test_should_return_error_with_code_if_service_returns_error(t *testing.T) {
 
 	// Arrange
 	teardown := setupAuthHandlersTest(t)

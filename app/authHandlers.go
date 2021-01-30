@@ -12,7 +12,7 @@ type AuthHandlers struct {
 	service service.AuthService
 }
 
-func (ah *AuthHandlers) logInUser (w http.ResponseWriter, r *http.Request) {
+func (ah *AuthHandlers) logInUser(w http.ResponseWriter, r *http.Request) {
 
 	var logInRequest dto.LogInRequest
 	err := json.NewDecoder(r.Body).Decode(&logInRequest)

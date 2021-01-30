@@ -53,7 +53,6 @@ func Start() {
 	log.Fatal(http.ListenAndServe(":8000", handler))
 }
 
-
 func sanityCheck() {
 	envVars := []string{
 		"DB_URL",

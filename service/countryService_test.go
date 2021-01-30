@@ -13,7 +13,7 @@ import (
 var mockCountryRepository *domain.MockCountryRepository
 var countryService CountryService
 
-func setupCountryServiceTest (t *testing.T) func() {
+func setupCountryServiceTest(t *testing.T) func() {
 	ctrl := gomock.NewController(t)
 	mockCountryRepository = domain.NewMockCountryRepository(ctrl)
 	countryService = NewCountryService(mockCountryRepository)
@@ -23,7 +23,7 @@ func setupCountryServiceTest (t *testing.T) func() {
 	}
 }
 
-func Test_GetAll_should_return_slice_of_pointers_to_GetCountryResponse_and_nil_if_repo_method_returns_no_error (t *testing.T) {
+func Test_GetAll_should_return_slice_of_pointers_to_GetCountryResponse_and_nil_if_repo_method_returns_no_error(t *testing.T) {
 
 	// Arrange
 	teardown := setupCountryServiceTest(t)
@@ -65,7 +65,7 @@ func Test_GetAll_should_return_slice_of_pointers_to_GetCountryResponse_and_nil_i
 	}
 }
 
-func Test_GetAll_should_return_nil_and_AppError_if_repo_method_returns_error (t *testing.T) {
+func Test_GetAll_should_return_nil_and_AppError_if_repo_method_returns_error(t *testing.T) {
 
 	// Arrange
 	teardown := setupCountryServiceTest(t)

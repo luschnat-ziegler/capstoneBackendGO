@@ -30,14 +30,14 @@ func NewUnexpectedError(message string) *AppError {
 func NewConflictError(message string) *AppError {
 	return &AppError{
 		Message: message,
-		Code: http.StatusConflict,
+		Code:    http.StatusConflict,
 	}
 }
 
 func NewBadRequestError(message string) *AppError {
 	return &AppError{
 		Message: message,
-		Code: http.StatusBadRequest,
+		Code:    http.StatusBadRequest,
 	}
 }
 
@@ -49,14 +49,14 @@ func NewUnauthorizedError(message string) *AppError {
 }
 
 type ValidationError struct {
-	Code    int    `json:",omitempty"`
+	Code          int      `json:",omitempty"`
 	InvalidFields []string `json:"invalid_fields"`
 }
 
 func NewValidationError(invalidFields []string) *ValidationError {
 	return &ValidationError{
 		InvalidFields: invalidFields,
-		Code:    http.StatusUnprocessableEntity,
+		Code:          http.StatusUnprocessableEntity,
 	}
 }
 

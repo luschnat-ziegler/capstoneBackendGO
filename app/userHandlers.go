@@ -28,7 +28,7 @@ func (uh *UserHandlers) GetUserById(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (uh *UserHandlers) CreateUser(w http. ResponseWriter, r *http.Request) {
+func (uh *UserHandlers) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	var createUserRequest dto.CreateUserRequest
 	err := json.NewDecoder(r.Body).Decode(&createUserRequest)
@@ -49,7 +49,7 @@ func (uh *UserHandlers) CreateUser(w http. ResponseWriter, r *http.Request) {
 	}
 }
 
-func (uh *UserHandlers) UpdateUserWeights(w http. ResponseWriter, r *http.Request) {
+func (uh *UserHandlers) UpdateUserWeights(w http.ResponseWriter, r *http.Request) {
 
 	var setUserWeightsRequest dto.SetUserWeightsRequest
 	err := json.NewDecoder(r.Body).Decode(&setUserWeightsRequest)

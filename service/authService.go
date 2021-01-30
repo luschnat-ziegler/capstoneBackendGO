@@ -34,7 +34,7 @@ func (s DefaultAuthService) Verify(authHeader string) (*string, *errs.AppError) 
 	}
 
 	tokenString := strings.TrimSpace(splitToken[1])
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {return []byte(secret), nil})
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) { return []byte(secret), nil })
 	if err != nil {
 		return nil, errs.NewUnauthorizedError("Invalid token")
 	}
@@ -43,7 +43,7 @@ func (s DefaultAuthService) Verify(authHeader string) (*string, *errs.AppError) 
 	return &idFromToken, nil
 }
 
-func (s DefaultAuthService) LogIn (request dto.LogInRequest) (*dto.LogInResponse, *errs.AppError) {
+func (s DefaultAuthService) LogIn(request dto.LogInRequest) (*dto.LogInResponse, *errs.AppError) {
 	user, err := s.repo.ByEmail(request.Email)
 	if err != nil {
 		return nil, errs.NewNotFoundError("User not found")
@@ -56,8 +56,8 @@ func (s DefaultAuthService) LogIn (request dto.LogInRequest) (*dto.LogInResponse
 	id := user.ID.Hex()
 
 	claims := jwt.MapClaims{
-		"sub": 		id,
-		"exp":      time.Now().Add(time.Hour).Unix(),
+		"sub": id,
+		"exp": time.Now().Add(time.Hour).Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

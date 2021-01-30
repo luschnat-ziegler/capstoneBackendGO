@@ -28,7 +28,7 @@ func setupUserServiceTest(t *testing.T) func() {
 // CreateUser
 // ##########
 
-func Test_CreateUser_returns_CreateUserResponse_and_nil_when_Repo_method_returns_no_error (t *testing.T) {
+func Test_CreateUser_returns_CreateUserResponse_and_nil_when_Repo_method_returns_no_error(t *testing.T) {
 
 	// Arrange
 	teardown := setupUserServiceTest(t)
@@ -64,7 +64,7 @@ func Test_CreateUser_returns_CreateUserResponse_and_nil_when_Repo_method_returns
 	}
 }
 
-func Test_CreateUser_returns_nil_and_AppError_if_repo_method_returns_error (t *testing.T) {
+func Test_CreateUser_returns_nil_and_AppError_if_repo_method_returns_error(t *testing.T) {
 
 	// Arrange
 	teardown := setupUserServiceTest(t)
@@ -108,7 +108,7 @@ func Test_CreateUser_returns_nil_and_AppError_if_repo_method_returns_error (t *t
 // GetUser
 // #######
 
-func Test_GetUser_should_return_GetUserRequest_and_nil_called_with_valid_id (t *testing.T) {
+func Test_GetUser_should_return_GetUserRequest_and_nil_called_with_valid_id(t *testing.T) {
 
 	// Arrange
 
@@ -151,7 +151,7 @@ func Test_GetUser_should_return_GetUserRequest_and_nil_called_with_valid_id (t *
 	}
 }
 
-func Test_GetUser_should_return_nil_and_AppError_if_repo_method_returns_error (t *testing.T) {
+func Test_GetUser_should_return_nil_and_AppError_if_repo_method_returns_error(t *testing.T) {
 
 	// Arrange
 	teardown := setupUserServiceTest(t)
@@ -184,8 +184,7 @@ func Test_GetUser_should_return_nil_and_AppError_if_repo_method_returns_error (t
 // UpdateWeights
 // #############
 
-
-func Test_UpdateWeights_should_return_SetUserWeightsResponse_and_nil_called_with_SetUserWeightsRequest (t *testing.T) {
+func Test_UpdateWeights_should_return_SetUserWeightsResponse_and_nil_called_with_SetUserWeightsRequest(t *testing.T) {
 
 	// Arrange
 	teardown := setupUserServiceTest(t)
@@ -228,7 +227,7 @@ func Test_UpdateWeights_should_return_SetUserWeightsResponse_and_nil_called_with
 	}
 }
 
-func Test_UpdateWeights_should_return_nil_and_AppError_if_repo_method_returns_error (t *testing.T) {
+func Test_UpdateWeights_should_return_nil_and_AppError_if_repo_method_returns_error(t *testing.T) {
 
 	// Arrange
 	teardown := setupUserServiceTest(t)

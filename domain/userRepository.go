@@ -9,7 +9,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type UserRepositoryDB struct {}
+type UserRepositoryDB struct{}
 
 func (userRepositoryDB UserRepositoryDB) ByEmail(email string) (*User, *error) {
 
@@ -67,7 +67,7 @@ func (userRepositoryDB UserRepositoryDB) Save(user User) (*string, *errs.AppErro
 
 	collection := client.Database("countrycheck").Collection("user")
 
-	count, err :=collection.CountDocuments(ctx, bson.M{"email": user.Email})
+	count, err := collection.CountDocuments(ctx, bson.M{"email": user.Email})
 	if err != nil {
 		logger.Error("Error querying database: " + err.Error())
 		return nil, errs.NewUnexpectedError("Database error")
@@ -114,11 +114,11 @@ func (userRepositoryDB UserRepositoryDB) UpdateWeights(request dto.SetUserWeight
 	update := bson.M{
 		"$set": bson.M{
 			"weightenvironment": request.WeightEnvironment,
-			"weightgender_": request.WeightGender,
-			"weightlgbtq": request.WeightLgbtq,
-			"weightequality": request.WeightEquality,
-			"weightcorruption": request.WeightCorruption,
-			"weightfreedom": request.WeightFreedom,
+			"weightgender_":     request.WeightGender,
+			"weightlgbtq":       request.WeightLgbtq,
+			"weightequality":    request.WeightEquality,
+			"weightcorruption":  request.WeightCorruption,
+			"weightfreedom":     request.WeightFreedom,
 		},
 	}
 
@@ -148,4 +148,3 @@ func (userRepositoryDB UserRepositoryDB) UpdateWeights(request dto.SetUserWeight
 func NewUserRepositoryDb() UserRepositoryDB {
 	return UserRepositoryDB{}
 }
-
